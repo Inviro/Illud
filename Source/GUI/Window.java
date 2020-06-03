@@ -57,10 +57,6 @@ public class Window {
         JTextArea jTextArea = userInput.getMainTextArea();
         JButton jButton = userInput.getPressMeButton();
 
-        /// Anything in between triple comments is for the demo and can be deleted later
-        jTextArea.setText("Change this to anything you want to be read and click the button.");
-        /// End of demo
-
         // Creates action listener for jButton
         jButton.addActionListener(new ActionListener() {
             @Override

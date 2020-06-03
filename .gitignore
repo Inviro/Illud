@@ -25,3 +25,6 @@ hs_err_pid*
 
 # Ignores log files for Mary TTS
 *.log/
+
+# Ignores production files from Intellij
+*.out/

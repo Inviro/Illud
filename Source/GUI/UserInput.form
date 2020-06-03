@@ -15,7 +15,10 @@
           </grid>
         </constraints>
         <properties>
-          <text value=""/>
+          <lineWrap value="true"/>
+          <text value="Change this to anything you want to be read and click the button."/>
+          <toolTipText value="Change this to anything you want to be read and click the button."/>
+          <wrapStyleWord value="true"/>
         </properties>
       </component>
       <component id="f92d7" class="javax.swing.JButton" binding="pressMeButton" default-binding="true">
