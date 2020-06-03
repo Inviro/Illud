@@ -19,6 +19,13 @@ public class Window {
 
     // Constructor
     public Window(String name){
+        // Initializing text to speech
+        tts = new TextToSpeech();                               // Creates new Text to Speech Object
+
+        // This one sounds the least bad. cmu-rms-hsmm sounds horrible.
+        tts.setVoice("dfki-poppy-hsmm");                        // Sets the text to speech voice
+        volume = 1.0f;                                          // Sets volume to a default number
+
         // Initializing JFrame
         jFrame = new JFrame(name);                              // Creates new JFrame to put JPanels on
         userInput = new UserInput();                            // Creates new instance of UserInput
@@ -28,13 +35,6 @@ public class Window {
         jFrame.pack();                                          // Packs the elements on top of the JFrame
         jFrame.setVisible(true);                                // Makes everything visible
         this.setSize(500, 400);                     // Sets size to a default amount
-
-        // Initializing text to speech
-        tts = new TextToSpeech();                               // Creates new Text to Speech Object
-
-        // This one sounds the least bad. cmu-rms-hsmm sounds horrible.
-        tts.setVoice("dfki-poppy-hsmm");                        // Sets the text to speech voice
-        volume = 1.0f;                                          // Sets volume to a default number
     }
 
     // Setter for size
@@ -57,18 +57,22 @@ public class Window {
         JTextArea jTextArea = userInput.getMainTextArea();
         JButton jButton = userInput.getPressMeButton();
 
+        /// Anything in between triple comments is for the demo and can be deleted later
+        jTextArea.setText("Change this to anything you want to be read and click the button.");
+        /// End of demo
+
         // Creates action listener for jButton
         jButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) { // Runs on button click
                 // Gets Text from jTextArea
                 String text = jTextArea.getText();
 
-                // Displays the text
-                JOptionPane.showMessageDialog(jFrame, text);
-
                 // Uses TTS on the text
                 speak(text);
+
+                // Displays the text
+                JOptionPane.showMessageDialog(jFrame, text);
             }
         });
     }
