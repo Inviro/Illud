@@ -39,8 +39,7 @@ public class Window {
     public Window(String name){
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
-
-        tts.setVoice(Voice.poppy.voiceString);                    // Sets the text to speech voice
+        tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
         volume = 1.0f;                                          // Sets volume to a default number
 
         // Initializing JFrame
@@ -68,8 +67,8 @@ public class Window {
         file.add(open);
         settings.add(about);
 
-        jFrame.setJMenuBar(jMenuBar);                           // Sets the menu bar
-        makeListeners();                                        // Creates action listeners
+        jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
+        makeListeners();                             // Creates action listeners
     }
 
     // Setter for size
@@ -100,7 +99,9 @@ public class Window {
                 String text = jTextArea.getText();
 
                 // Uses TTS on the text
-                speak(text);
+                if(!text.equals("")){ // Makes sure that there is text to be read
+                    speak(text);
+                }
 
                 // Displays the text
                 JOptionPane.showMessageDialog(jFrame, text);
