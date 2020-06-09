@@ -1,14 +1,23 @@
 package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 
-import javax.swing.*; // Import for GUI
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;                   // Used for GUI
+import java.awt.event.ActionEvent;      // Used to handle events
+import java.awt.event.ActionListener;   // Adds a listener to events
 
 public class Window {
     // Window Variables
     private JFrame jFrame;          // Main JFrame where everything is put on top of
     private int width, height;      // Window Dimensions
+
+    ///
+    // JMenuBar Variables
+    private JMenuBar jMenuBar;
+    private JMenu file;
+    private JMenuItem open;
+    private JMenu settings;
+    private JMenuItem about;
+    ///
 
     // UserInput variables
     private UserInput userInput;    // Form for user input
@@ -35,6 +44,28 @@ public class Window {
         jFrame.pack();                                          // Packs the elements on top of the JFrame
         jFrame.setVisible(true);                                // Makes everything visible
         this.setSize(500, 400);                     // Sets size to a default amount
+
+        ///
+        // Creating jMenuBar, jMenus and jMenuItems
+        // jMenuBar > jMenu > jMenuItem
+        // jMenuBar holds all of the jMenus
+        // A jMenu for example would be "File" or something you would see inside the bar
+        // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
+        jMenuBar = new JMenuBar();
+        file = new JMenu("File");
+        open = new JMenuItem("Open");
+
+        settings = new JMenu("Settings");
+        about = new JMenuItem("About");
+
+        file.add(open);
+        settings.add(about);
+
+        jMenuBar.add(file);
+        jMenuBar.add(settings);
+
+        jFrame.setJMenuBar(jMenuBar);
+        ///
     }
 
     // Setter for size
