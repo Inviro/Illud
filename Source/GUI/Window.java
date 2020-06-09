@@ -10,14 +10,12 @@ public class Window {
     private JFrame jFrame;          // Main JFrame where everything is put on top of
     private int width, height;      // Window Dimensions
 
-    ///
     // JMenuBar Variables
     private JMenuBar jMenuBar;
     private JMenu file;
     private JMenuItem open;
     private JMenu settings;
     private JMenuItem about;
-    ///
 
     // UserInput variables
     private UserInput userInput;    // Form for user input
@@ -26,46 +24,52 @@ public class Window {
     private TextToSpeech tts;       // Text to speech object
     private float volume;           // Volume of Text To Speech
 
+    // Enum for getting strings corresponding to different voices
+    public enum Voice{
+        poppy("dfki-poppy-hsmm"),
+        rms("cmu-rms-hsmm"),
+        slt("cmu-slt-hsmm");
+        public final String voiceString;    // Unmodifiable value
+        Voice(String vS){                   // Enum constructor
+            this.voiceString = vS;
+        }
+    }
+
     // Constructor
     public Window(String name){
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
 
-        // This one sounds the least bad. cmu-rms-hsmm sounds horrible.
-        tts.setVoice("dfki-poppy-hsmm");                        // Sets the text to speech voice
+        tts.setVoice(Voice.poppy.voiceString);                    // Sets the text to speech voice
         volume = 1.0f;                                          // Sets volume to a default number
 
         // Initializing JFrame
         jFrame = new JFrame(name);                              // Creates new JFrame to put JPanels on
         userInput = new UserInput();                            // Creates new instance of UserInput
-        makeListeners();                                        // Creates listeners for userInput
         jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked
         jFrame.pack();                                          // Packs the elements on top of the JFrame
         jFrame.setVisible(true);                                // Makes everything visible
         this.setSize(500, 400);                     // Sets size to a default amount
 
-        ///
         // Creating jMenuBar, jMenus and jMenuItems
         // jMenuBar > jMenu > jMenuItem
         // jMenuBar holds all of the jMenus
         // A jMenu for example would be "File" or something you would see inside the bar
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         jMenuBar = new JMenuBar();
-        file = new JMenu("File");
-        open = new JMenuItem("Open");
-
-        settings = new JMenu("Settings");
-        about = new JMenuItem("About");
-
-        file.add(open);
-        settings.add(about);
+        file = new JMenu("File");                 // "File"
+        open = new JMenuItem("Open");           // "File > Open"
+        settings = new JMenu("Settings");         // "Settings"
+        about = new JMenuItem("About");         // "Settings > About"
 
         jMenuBar.add(file);
         jMenuBar.add(settings);
+        file.add(open);
+        settings.add(about);
 
-        jFrame.setJMenuBar(jMenuBar);
-        ///
+        jFrame.setJMenuBar(jMenuBar);                           // Sets the menu bar
+        makeListeners();                                        // Creates action listeners
     }
 
     // Setter for size
