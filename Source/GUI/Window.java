@@ -37,6 +37,22 @@ public class Window {
 
     // Constructor
     public Window(String name){
+        // Setting look and feel
+        try {
+            // For each installed look and feel (UI theme)
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) { // Searches for Nimbus theme
+                    UIManager.setLookAndFeel(info.getClassName()); // Sets to Nimbus theme if found
+                    break; // Breaks loop
+                }
+            }
+        }
+        catch (Exception e) { // Theme is not found
+            try {
+                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // Sets to default theme
+            } catch (Exception ex) {}
+        }
+
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
         tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
