@@ -7,6 +7,9 @@ public class UserInput {
     private JPanel MainPanel;
     private JTextArea mainTextArea;
     private JButton pressMeButton;
+    private JList jList;
+    private JPanel jPanel;
+    private JPanel textPanel;
 
     // Getters
     public JPanel getMainPanel() { return MainPanel; }
