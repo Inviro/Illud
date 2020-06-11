@@ -40,10 +40,6 @@ public class Window {
         }
     }
 
-    /// Testing Only, delete me later
-    private int call_count = 0;
-    ///
-
     // Constructor
     public Window(String name){
         // Setting look and feel
@@ -155,22 +151,11 @@ public class Window {
 
     private void updateCounters(JTextArea jTextArea, JList jList){
         Vector<String> result = new Vector<>();
-
-        /// Delete anything in between triple quotes, it's just for testing JList updating
-        call_count++;
-        result.add(call_count + " characters\n");
-        result.add((call_count + 1) + " words\n");
-        result.add((call_count + 2) + " lines\n");
-        result.add((call_count + 3) + " paragraphs\n");
-        result.add((call_count + 4) + " sentences\n");
-        ///
-
-        // TODO: Uncomment after implementing counters in CounterUtil
-//        result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
-//        result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
-//        result.add(CounterUtil.lineCounter(jTextArea) + " lines\n");
-//        result.add(CounterUtil.paragraphCounter(jTextArea) + " paragraphs\n");
-//        result.add(CounterUtil.sentenceCounter(jTextArea) + " sentences\n");
+        result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
+        result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
+        result.add(CounterUtil.lineCounter(jTextArea) + " lines\n");
+        result.add(CounterUtil.paragraphCounter(jTextArea) + " paragraphs\n");
+        result.add(CounterUtil.sentenceCounter(jTextArea) + " sentences\n");
         jList.setListData(result);
     }
 }
