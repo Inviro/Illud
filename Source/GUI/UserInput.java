@@ -15,4 +15,5 @@ public class UserInput {
     public JPanel getMainPanel() { return MainPanel; }
     public JTextArea getMainTextArea() { return mainTextArea; }
     public JButton getPressMeButton() { return pressMeButton; }
+    public JList getJList() { return jList; }
 }
