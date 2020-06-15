@@ -70,7 +70,7 @@ public class CounterUtil {
 
         while ((line5 = br.readLine()) != null){
 
-            String [] sentenceList =line.split("[\n\r]+");
+            String [] sentenceList =line5.split("[\n\r]+");
             numOfLines += sentenceList.length;
 
         }
