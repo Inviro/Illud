@@ -1,62 +1,29 @@
 package Source.Logic;
 
 import javax.swing.JTextArea;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 
 public class CounterUtil{
-    public static int characterCounter(JTextArea input) throws IOException{
-        StringReader sr = new StringReader(input.getText());
-        BufferedReader br = new BufferedReader(sr);
-        int numOfChar = 0;
-        String temp;
-
-        while ((temp = br.readLine()) != null){
-            numOfChar += temp.length();
-        }
-        return numOfChar;
+    public static int characterCounter(JTextArea input){
+        return input.getText().length(); // Number of characters in the input
     }
 
-    public static int wordCounter(JTextArea input) throws IOException{
-        StringReader sr = new StringReader(input.getText());
-        BufferedReader br = new BufferedReader(sr);
-        int numOfWords = 0;
-        String temp;
-
-        while ((temp = br.readLine()) != null){
-            String[] wordList = temp.split("\\s");
-            numOfWords += wordList.length;
-        }
-        return numOfWords;
+    public static int wordCounter(JTextArea input){
+        // Counts regex captures separated by whitespace
+        return input.getText().split("\\s").length;
     }
 
     public static int lineCounter(JTextArea input){
-        return input.getLineCount();
+        // Counts regex captures separated by newline characters
+        return input.getText().split("\\n").length;
     }
 
-    public static int paragraphCounter(JTextArea input) throws IOException{
-        StringReader sr = new StringReader(input.getText());
-        BufferedReader br = new BufferedReader(sr);
-        int numOfParagraphs=0;
-        String temp;
-
-        while ((temp = br.readLine()) != null){
-            numOfParagraphs++;
-        }
-        return numOfParagraphs;
+    public static int paragraphCounter(JTextArea input){
+        // Counts regex captures separated by line feed characters
+        return input.getText().split("\\R+").length;
     }
 
-    public static int sentenceCounter(JTextArea input) throws IOException{
-        StringReader sr = new StringReader(input.getText());
-        BufferedReader br = new BufferedReader(sr);
-        int numOfSentences = 0;
-        String line;
-
-        while ((line = br.readLine()) != null){
-            String [] sentenceList = line.split("[!?.:]+");
-            numOfSentences += sentenceList.length;
-        }
-        return numOfSentences;
+    public static int sentenceCounter(JTextArea input) {
+        // Counts regex captures separated by a period followed by a space
+        return input.getText().split("[!?.:]+").length;
     }
 }
