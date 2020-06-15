@@ -66,7 +66,18 @@ public class CounterUtil {
         //CANT GET IT TO WORK. It doesnt read the number of rows in the text
         // box.
 
-        return input.getRows();
+        int numOfLines=0;
+
+        String line5;
+
+        while ((line = br.readLine()) != null){
+
+            String [] sentenceList =line.split("[\n\r]+");
+            numOfLines += sentenceList.length;
+
+        }
+
+        return numOfLines;
 
     }
 
