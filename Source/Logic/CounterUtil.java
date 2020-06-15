@@ -65,6 +65,8 @@ public class CounterUtil {
 
         //CANT GET IT TO WORK. It doesnt read the number of rows in the text
         // box.
+        StringReader sr= new StringReader(input.getText());
+        BufferedReader br =new BufferedReader(sr);
         int numOfLines=0;
         String line5;
 
