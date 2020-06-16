@@ -16,13 +16,7 @@ public class Window {
     private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
-
-    // JMenuBar Variables
-    private JMenuBar jMenuBar;
-    private JMenu file;
-    private JMenuItem open;
-    private JMenu settings;
-    private JMenuItem about;
+    Find find; ///
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -64,44 +58,7 @@ public class Window {
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
         tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
         volume = 1.0f;                                          // Sets volume to a default number
-
-        // Initializing JFrame
-        jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
-
-        // Setting Icon image in the JFrame
-        jFrame.setIconImage(                                    // Sets icon image
-                new ImageIcon(                                  // To a new icon image composed of:
-                        getClass()                              // The current classes'
-                        .getResource(ICON_PATH))                // Resource at ICON_PATH
-                        .getImage()                             // Getting the image from the resource
-        );
-
-        userInput = new UserInput();                            // Creates new instance of UserInput
-        jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked
-        jFrame.pack();                                          // Packs the elements on top of the JFrame
-        jFrame.setVisible(true);                                // Makes everything visible
-        this.setSize(500, 400);                     // Sets size to a default amount
-
-        // Creating jMenuBar, jMenus and jMenuItems
-        // jMenuBar > jMenu > jMenuItem
-        // jMenuBar holds all of the jMenus
-        // A jMenu for example would be "File" or something you would see inside the bar
-        // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
-        jMenuBar = new JMenuBar();
-        file = new JMenu("File");                 // "File"
-        open = new JMenuItem("Open");           // "File > Open"
-        settings = new JMenu("Settings");         // "Settings"
-        about = new JMenuItem("About");         // "Settings > About"
-
-        // Creating the menu bar from the above elements
-        jMenuBar.add(file);
-        jMenuBar.add(settings);
-        file.add(open);
-        settings.add(about);
-
-        jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
-        makeListeners();                             // Creates action listeners
+        initUI();                                               // Initializes the User Interface
     }
 
     // Setter for size
@@ -116,7 +73,52 @@ public class Window {
     public int getHeight() { return height; }
 
     // Misc Functions
-    private void speak(String text) {tts.speak(text, volume, false, false);}
+    private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
+    private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
+
+    // Initializing all of the UI elements in Window
+    private void initUI(){
+        // Initializing JFrame
+        jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
+
+        // Setting Icon image in the JFrame
+        jFrame.setIconImage(                                    // Sets icon image
+                new ImageIcon(                                  // To a new icon image composed of:
+                        getClass()                              // The current class:
+                                .getResource(ICON_PATH))                // Resource at ICON_PATH
+                        .getImage()                             // Image from resource
+        );
+
+        userInput = new UserInput();                            // Creates new instance of UserInput
+        jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked
+        jFrame.pack();                                          // Packs the elements on top of the JFrame
+        jFrame.setVisible(true);                                // Makes everything visible
+        this.setSize(500, 400);                     // Sets size to a default amount
+
+        // Creating jMenuBar, jMenus and jMenuItems
+        // jMenuBar > jMenu > jMenuItem
+        // jMenuBar holds all of the jMenus
+        // A jMenu for example would be "File" or something you would see inside the bar
+        // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
+        JMenuBar jMenuBar = new JMenuBar();
+        JMenu file = new JMenu("File");               // "File"
+        JMenuItem open = new JMenuItem("Open");     // "File > Open"
+        JMenu settings = new JMenu("Settings");       // "Settings"
+        JMenuItem about = new JMenuItem("About");   // "Settings > About"
+
+        // Creating the menu bar from the above elements
+        jMenuBar.add(file);
+        jMenuBar.add(settings);
+        file.add(open);
+        settings.add(about);
+
+        jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
+        makeListeners();                             // Creates action listeners
+
+        // Creating Find Dialog
+        find = new Find();
+    }
 
     // Makes listeners for UserInput
     private void makeListeners(){
@@ -137,7 +139,8 @@ public class Window {
                 }
 
                 // Displays the text
-                JOptionPane.showMessageDialog(jFrame, text);
+//                JOptionPane.showMessageDialog(jFrame, text);
+                find.show();
             }
         });
 
