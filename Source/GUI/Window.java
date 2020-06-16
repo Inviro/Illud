@@ -2,19 +2,21 @@ package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
 
-import javax.swing.*;                       // Used for GUI
-import javax.swing.event.DocumentEvent;     // Used for getting jTextArea text
-import javax.swing.event.DocumentListener;  // Used for creating jTextArea listeners
-import javax.swing.text.Document;           // Used to listen for text change
-import java.awt.event.ActionEvent;          // Used to handle events
-import java.awt.event.ActionListener;       // Adds a listener to events
+import javax.swing.*;                                           // Used for GUI
+import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
+import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
+import javax.swing.text.Document;                               // Used to listen for text change
+import java.awt.event.ActionEvent;                              // Used to handle events
+import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.io.IOException;
-import java.util.Vector;                    // Used for JList
+import java.util.Vector;                                        // Used for JList
 
 public class Window {
     // Window Variables
-    private JFrame jFrame;          // Main JFrame where everything is put on top of
-    private int width, height;      // Window Dimensions
+    private JFrame jFrame;                                      // Main JFrame where everything is put on top of
+    private int width, height;                                  // Window Dimensions
+    private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
+    private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
 
     // JMenuBar Variables
     private JMenuBar jMenuBar;
@@ -24,25 +26,25 @@ public class Window {
     private JMenuItem about;
 
     // UserInput variables
-    private UserInput userInput;    // Form for user input
+    private UserInput userInput;                                // Form for user input
 
     // Text to Speech Variables
-    private TextToSpeech tts;       // Text to speech object
-    private float volume;           // Volume of Text To Speech
+    private TextToSpeech tts;                                   // Text to speech object
+    private float volume;                                       // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
     public enum Voice{
         poppy("dfki-poppy-hsmm"),
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
-        public final String voiceString;    // Unmodifiable value
+        public final String voiceString;                        // Unmodifiable value
         Voice(String vS){                   // Enum constructor
             this.voiceString = vS;
         }
     }
 
     // Constructor
-    public Window(String name){
+    public Window(){
         // Setting look and feel
         try {
             // For each installed look and feel (UI theme)
@@ -65,7 +67,16 @@ public class Window {
         volume = 1.0f;                                          // Sets volume to a default number
 
         // Initializing JFrame
-        jFrame = new JFrame(name);                              // Creates new JFrame to put JPanels on
+        jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
+
+        // Setting Icon image in the JFrame
+        jFrame.setIconImage(                                    // Sets icon image
+                new ImageIcon(                                  // To a new icon image composed of:
+                        getClass()                              // The current classes'
+                        .getResource(ICON_PATH))                // Resource at ICON_PATH
+                        .getImage()                             // Getting the image from the resource
+        );
+
         userInput = new UserInput();                            // Creates new instance of UserInput
         jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked

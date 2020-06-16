@@ -9,7 +9,7 @@ public class UserInput {
     private JButton pressMeButton;
     private JList jList;
     private JPanel jPanel;
-    private JPanel textPanel;
+    private JScrollPane scrollPane;
 
     // Getters
     public JPanel getMainPanel() { return MainPanel; }
