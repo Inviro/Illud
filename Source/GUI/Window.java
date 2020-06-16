@@ -8,7 +8,6 @@ import javax.swing.event.DocumentListener;                      // Used for crea
 import javax.swing.text.Document;                               // Used to listen for text change
 import java.awt.event.ActionEvent;                              // Used to handle events
 import java.awt.event.ActionListener;                           // Adds a listener to events
-import java.io.IOException;
 import java.util.Vector;                                        // Used for JList
 
 public class Window {
@@ -95,6 +94,7 @@ public class Window {
         settings = new JMenu("Settings");         // "Settings"
         about = new JMenuItem("About");         // "Settings > About"
 
+        // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(settings);
         file.add(open);
@@ -146,34 +146,22 @@ public class Window {
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                try {
-                    updateCounters(jTextArea, list);
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                updateCounters(jTextArea, list);
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                try {
-                    updateCounters(jTextArea, list);
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                updateCounters(jTextArea, list);
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                try {
-                    updateCounters(jTextArea, list);
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
-                }
+                updateCounters(jTextArea, list);
             }
         });
     }
 
-    private void updateCounters(JTextArea jTextArea, JList jList) throws IOException {
+    private void updateCounters(JTextArea jTextArea, JList jList){
         Vector<String> result = new Vector<>();
         result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
         result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
