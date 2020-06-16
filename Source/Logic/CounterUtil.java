@@ -9,7 +9,7 @@ public class CounterUtil{
 
     public static int wordCounter(JTextArea input){
         // Counts regex captures separated by whitespace
-        return input.getText().split("\\s").length;
+        return input.getText().split("\\s+").length;
     }
 
     public static int lineCounter(JTextArea input){

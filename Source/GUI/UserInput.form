@@ -6,15 +6,17 @@
       <xy x="20" y="20" width="610" height="1155"/>
     </constraints>
     <properties/>
-    <border type="none" title=""/>
+    <border type="etched" title=""/>
     <children>
       <grid id="4fd4d" binding="jPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="bevel-lowered" title="Current Count:"/>
+        <border type="bevel-lowered" title="Current Count:">
+          <font name="Roboto Light"/>
+        </border>
         <children>
           <component id="b6d6f" class="javax.swing.JList" binding="jList">
             <constraints>
@@ -53,32 +55,29 @@
           </component>
         </children>
       </grid>
-      <grid id="80798" binding="textPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-        <margin top="0" left="0" bottom="0" right="0"/>
+      <scrollpane id="439a3" binding="scrollPane">
         <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="line" title="Write things below">
+        <border type="line" title="Write things below:">
+          <font name="Roboto Light"/>
+          <title-color color="-16777216"/>
           <color color="-4473925"/>
         </border>
         <children>
           <component id="9f91" class="javax.swing.JTextArea" binding="mainTextArea">
-            <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="4" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                <preferred-size width="100" height="50"/>
-              </grid>
-            </constraints>
+            <constraints/>
             <properties>
               <enabled value="true"/>
-              <lineWrap value="true"/>
+              <lineWrap value="false"/>
               <text value=""/>
-              <toolTipText value="Change this to anything you want to be read and click the button."/>
-              <wrapStyleWord value="true"/>
+              <toolTipText value=""/>
+              <wrapStyleWord value="false"/>
             </properties>
           </component>
         </children>
-      </grid>
+      </scrollpane>
     </children>
   </grid>
 </form>
