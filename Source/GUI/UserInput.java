@@ -16,4 +16,7 @@ public class UserInput {
     public JTextArea getMainTextArea() { return mainTextArea; }
     public JButton getPressMeButton() { return pressMeButton; }
     public JList getJList() { return jList; }
+    public void setFile(String text) {
+        mainTextArea.setText(text);
+    }
 }
