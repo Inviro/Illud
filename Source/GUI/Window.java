@@ -115,9 +115,6 @@ public class Window {
 
         jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
         makeListeners();                             // Creates action listeners
-
-        // Creating Find Dialog
-        find = new Find();
     }
 
     // Makes listeners for UserInput
