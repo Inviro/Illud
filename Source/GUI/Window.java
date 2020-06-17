@@ -25,7 +25,7 @@ public class Window extends Component {
 
     private JFileChooser fc;//me
     static private final String newline = "\n";//me
-    private FileEx fileEx;//me
+    //private FileEx fileEx;//me
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
