@@ -140,6 +140,8 @@ public class Window {
 
                 // Displays the text
 //                JOptionPane.showMessageDialog(jFrame, text);
+                find = new Find();
+                find.setSize(500, 150);
                 find.setVisible(true);
             }
         });
