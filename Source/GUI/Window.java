@@ -140,7 +140,7 @@ public class Window {
 
                 // Displays the text
 //                JOptionPane.showMessageDialog(jFrame, text);
-                find.show();
+                find.setVisible(true);
             }
         });
 
