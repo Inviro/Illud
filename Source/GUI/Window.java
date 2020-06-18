@@ -10,8 +10,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import java.awt.event.ActionEvent;                              // Used to handle events
-import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
 
 public class Window extends Component {
@@ -20,7 +18,9 @@ public class Window extends Component {
     private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
+
     Find find;                                                  // Find dialog
+    Dictionary dictionary;                                      // Dictionary dialog
 
     // JMenuItems to add listeners to in the menu
     JMenuItem open_menu_item;
@@ -140,7 +140,10 @@ public class Window extends Component {
 
 
         find = new Find();                                       // Creating Find Dialog
-        find.setSize(500, 150);
+        find.setSize(500, 150);                      // Setting Dialog Size
+
+        dictionary = new Dictionary();                           // Creating Dictionary Dialog
+        dictionary.setSize(500, 150);                // Setting Dialog Size
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
@@ -241,6 +244,11 @@ public class Window extends Component {
         // Listener for Action > Find
         find_menu_item.addActionListener(e -> {
             find.setVisible(true);
+        });
+
+        // Listener for Action > Dictionary
+        dict_menu_item.addActionListener(e -> {
+            dictionary.setVisible(true);
         });
     }
 
