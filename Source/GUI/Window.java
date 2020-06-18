@@ -6,17 +6,26 @@ import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
 import java.awt.event.ActionEvent;                              // Used to handle events
 import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
 
-public class Window {
+public class Window extends Component {
     // Window Variables
     private JFrame jFrame;                                      // Main JFrame where everything is put on top of
     private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
     Find find; ///
+
+    private JFileChooser fc;//me
+    static private final String newline = "\n";//me
+    //private FileEx fileEx;//me
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -74,8 +83,8 @@ public class Window {
 
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
-    private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
-
+    private void endSpeak() { tts.stopSpeaking(); }                             // Ends MaryTTS playback
+  
     // Initializing all of the UI elements in Window
     private void initUI(){
         // Initializing JFrame
@@ -107,12 +116,38 @@ public class Window {
         JMenu settings = new JMenu("Settings");       // "Settings"
         JMenuItem about = new JMenuItem("About");   // "Settings > About"
 
+        // Listener for File > Open
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fc = new JFileChooser(); // New file chooser object
+
+                // Opens the dialog for the file chooser
+                int returnVal = fc.showOpenDialog(Window.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    System.out.println("Opening: " + file.getName() + "." + newline);
+
+                    // Reading file into a string
+                    Scanner scanner = null;
+                    try {
+                        scanner = new Scanner(file);
+                    } catch (FileNotFoundException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    String fileText = scanner.useDelimiter("\\A").next();
+                    scanner.close();
+
+                    userInput.setFile(fileText); // Puts string from file into main text area
+                }
+            }
+        });
+
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(settings);
         file.add(open);
         settings.add(about);
-
         jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
         makeListeners();                             // Creates action listeners
 
@@ -140,6 +175,8 @@ public class Window {
 
                 // Displays the text
 //                JOptionPane.showMessageDialog(jFrame, text);
+                find = new Find();
+                find.setSize(500, 150);
                 find.setVisible(true);
             }
         });
