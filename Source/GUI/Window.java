@@ -4,6 +4,7 @@ import Source.Logic.CounterUtil;
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
+import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;                               // Used to listen for text change
 import java.awt.*;
 import java.io.File;
@@ -30,6 +31,7 @@ public class Window extends Component {
 
     private JFileChooser fc;                                    // File chooser
     //private FileEx fileEx;//me
+    private Vector<String> acceptedTypes;
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -90,7 +92,7 @@ public class Window extends Component {
     private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
 
     // Initializing all of the UI elements in Window
-    private void initUI(){
+    private void initUI() {
         // Initializing JFrame
         jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
 
@@ -98,7 +100,7 @@ public class Window extends Component {
         jFrame.setIconImage(                                    // Sets icon image
                 new ImageIcon(                                  // To a new icon image composed of:
                         getClass()                              // The current class:
-                        .getResource(ICON_PATH))                // Resource at ICON_PATH
+                                .getResource(ICON_PATH))                // Resource at ICON_PATH
                         .getImage()                             // Image from resource
         );
 
@@ -141,6 +143,36 @@ public class Window extends Component {
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
+
+        // Setting acceptable file types
+        fc.setAcceptAllFileFilterUsed(false);                    // Does not accept all file types
+        acceptedTypes = new Vector<>();                          // Holds accepted file types
+        acceptedTypes.add(".txt");                               // Text files
+        fc.setFileFilter(new FileFilter() {                      // Creates a new filter
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory()){                            // Allows folder to be selected
+                    return true;
+                } else{
+                    String filename = f.getName().toLowerCase();
+                    for(String ele: acceptedTypes){              // For each accepted file type
+                        if (filename.endsWith(ele)){             // Returns true if suffix is accepted file type
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            }
+            @Override
+            public String getDescription() {
+                // Creating accepted file type descriptions
+                String temp = "Text Files ";
+                for(String ele: acceptedTypes) {              // For each accepted file type
+                    temp += "(*." + ele + ")";
+                }
+                return temp;
+            }
+        });
     }
 
     // Makes listeners for UserInput
