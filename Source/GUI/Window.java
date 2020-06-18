@@ -6,6 +6,13 @@ import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
+<<<<<<< Updated upstream
+=======
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+>>>>>>> Stashed changes
 import java.awt.event.ActionEvent;                              // Used to handle events
 import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
@@ -16,8 +23,15 @@ public class Window {
     private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
-    Find find; ///
+    Find find;                                                  // Find dialog
+    JMenuItem open;                                             // File -> Open
 
+<<<<<<< Updated upstream
+=======
+    private JFileChooser fc;                                    // File chooser
+    //private FileEx fileEx;//me
+
+>>>>>>> Stashed changes
     // UserInput variables
     private UserInput userInput;                                // Form for user input
 
@@ -75,7 +89,11 @@ public class Window {
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
     private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
+<<<<<<< Updated upstream
 
+=======
+  
+>>>>>>> Stashed changes
     // Initializing all of the UI elements in Window
     private void initUI(){
         // Initializing JFrame
@@ -85,7 +103,7 @@ public class Window {
         jFrame.setIconImage(                                    // Sets icon image
                 new ImageIcon(                                  // To a new icon image composed of:
                         getClass()                              // The current class:
-                                .getResource(ICON_PATH))                // Resource at ICON_PATH
+                        .getResource(ICON_PATH))                // Resource at ICON_PATH
                         .getImage()                             // Image from resource
         );
 
@@ -103,7 +121,7 @@ public class Window {
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         JMenuBar jMenuBar = new JMenuBar();
         JMenu file = new JMenu("File");               // "File"
-        JMenuItem open = new JMenuItem("Open");     // "File > Open"
+        open = new JMenuItem("Open");               // "File > Open"
         JMenu settings = new JMenu("Settings");       // "Settings"
         JMenuItem about = new JMenuItem("About");   // "Settings > About"
 
@@ -160,6 +178,33 @@ public class Window {
             @Override
             public void changedUpdate(DocumentEvent e) {
                 updateCounters(jTextArea, list);
+            }
+        });
+
+        // Listener for File > Open
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fc = new JFileChooser(); // New file chooser object
+
+                // Opens the dialog for the file chooser
+                int returnVal = fc.showOpenDialog(Window.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    System.out.println("Opening: " + file.getName() + ".\n");
+
+                    // Reading file into a string
+                    Scanner scanner = null;
+                    try {
+                        scanner = new Scanner(file);
+                    } catch (FileNotFoundException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    String fileText = scanner.useDelimiter("\\A").next();
+                    scanner.close();
+
+                    userInput.setFile(fileText); // Puts string from file into main text area
+                }
             }
         });
     }
