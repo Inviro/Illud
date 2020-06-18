@@ -109,18 +109,26 @@ public class Window extends Component {
         // A jMenu for example would be "File" or something you would see inside the bar
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         JMenuBar jMenuBar = new JMenuBar();
-        JMenu file = new JMenu("File");               // "File"
-        open = new JMenuItem("Open");               // "File > Open"
-        JMenu settings = new JMenu("Settings");       // "Settings"
-        JMenuItem about = new JMenuItem("About");   // "Settings > About"
+        JMenu file = new JMenu("File");                       // "File"
+        open = new JMenuItem("Open");                       // "File > Open"
+        JMenu actions = new JMenu("Actions");                 // "Actions"
+        JMenuItem dict = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
+        JMenuItem findText = new JMenuItem("Find");         // "Actions" > "Find"
+        JMenuItem tts = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
+        JMenu settings = new JMenu("Settings");               // "Settings"
+        JMenuItem about = new JMenuItem("About");           // "Settings" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
+        jMenuBar.add(actions);
         jMenuBar.add(settings);
         file.add(open);
+        actions.add(dict);
+        actions.add(findText);
+        actions.add(tts);
         settings.add(about);
-        jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
-        makeListeners();                             // Creates action listeners
+        jFrame.setJMenuBar(jMenuBar);                            // Sets the menu bar
+        makeListeners();                                         // Creates action listeners
 
         // Creating Find Dialog
         find = new Find();
@@ -154,6 +162,7 @@ public class Window extends Component {
 
         JList list = userInput.getJList();
         Document doc = jTextArea.getDocument();
+        // Listener for Document
         doc.addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
