@@ -6,16 +6,13 @@ import javax.swing.event.DocumentEvent;                         // Used for gett
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;                               // Used to listen for text change
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Vector;                                        // Used for JList
 
-public class Window extends Component {
+public class Window extends JFrame {
     // Window Variables
-    private JFrame jFrame;                                      // Main JFrame where everything is put on top of
-    private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
 
@@ -76,17 +73,6 @@ public class Window extends Component {
         initUI();                                               // Initializes the User Interface
     }
 
-    // Setter for size
-    public void setSize(int width, int height){
-        jFrame.setSize(width, height);
-        this.width = width;
-        this.height = height;
-    }
-
-    // Getters
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
-
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
     private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
@@ -94,22 +80,23 @@ public class Window extends Component {
     // Initializing all of the UI elements in Window
     private void initUI() {
         // Initializing JFrame
-        jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
+        this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
         // Setting Icon image in the JFrame
-        jFrame.setIconImage(                                    // Sets icon image
+        this.setIconImage(                                      // Sets icon image
                 new ImageIcon(                                  // To a new icon image composed of:
                         getClass()                              // The current class:
-                                .getResource(ICON_PATH))                // Resource at ICON_PATH
+                        .getResource(ICON_PATH))                // Resource at ICON_PATH
                         .getImage()                             // Image from resource
         );
 
         userInput = new UserInput();                            // Creates new instance of UserInput
-        jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked
-        jFrame.pack();                                          // Packs the elements on top of the JFrame
-        jFrame.setVisible(true);                                // Makes everything visible
+        this.setContentPane(userInput.getMainPanel());          // Sets content pane to new instance of UserInput
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    // Exits when X is clicked
+        this.pack();                                            // Packs the elements on top of the JFrame
         this.setSize(500, 400);                     // Sets size to a default amount
+        this.setLocationRelativeTo(null);                       // Centers Window
+        this.setVisible(true);                                  // Makes everything visible
 
         // Creating jMenuBar, jMenus and jMenuItems
         // jMenuBar > jMenu > jMenuItem
@@ -135,9 +122,8 @@ public class Window extends Component {
         actions.add(find_menu_item);
         actions.add(tts_menu_item);
         settings.add(about_menu_item);
-        jFrame.setJMenuBar(jMenuBar);                            // Sets the menu bar
+        this.setJMenuBar(jMenuBar);                              // Sets the menu bar
         makeListeners();                                         // Creates action listeners
-
 
         find = new Find();                                       // Creating Find Dialog
         find.setSize(500, 150);                      // Setting Dialog Size
@@ -149,7 +135,7 @@ public class Window extends Component {
         fc = new JFileChooser();                                 // New file chooser object
 
         // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                    // Does not accept all file types
+//        fc.setAcceptAllFileFilterUsed(false);                  // Does not accept all file types
         acceptedTypes = new Vector<>();                          // Holds accepted file types
         acceptedTypes.add("txt");                                // Text files
         fc.setFileFilter(new FileFilter() {                      // Creates a new filter
@@ -196,7 +182,7 @@ public class Window extends Component {
             }
 
             // Displays the text
-            JOptionPane.showMessageDialog(jFrame, text);
+            JOptionPane.showMessageDialog(this, text);
         });
 
         JList list = userInput.getJList();
@@ -222,10 +208,9 @@ public class Window extends Component {
         // Listener for File > Open
         open_menu_item.addActionListener(e -> {
             // Opens the dialog for the file chooser
-            int returnVal = fc.showOpenDialog(Window.this);
+            int returnVal = fc.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fc.getSelectedFile();
-                System.out.println("Opening: " + file.getName() + ".\n");
 
                 // Reading file into a string
                 Scanner scanner = null;
@@ -234,7 +219,7 @@ public class Window extends Component {
                 } catch (FileNotFoundException fileNotFoundException) {
                     fileNotFoundException.printStackTrace();
                 }
-                String fileText = scanner.useDelimiter("\\A").next();
+                String fileText = scanner.next();
                 scanner.close();
 
                 userInput.setFile(fileText); // Puts string from file into main text area
