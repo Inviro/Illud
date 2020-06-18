@@ -1,23 +1,19 @@
 package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
-
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
-<<<<<<< Updated upstream
-=======
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
->>>>>>> Stashed changes
 import java.awt.event.ActionEvent;                              // Used to handle events
 import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
 
-public class Window {
+public class Window extends Component {
     // Window Variables
     private JFrame jFrame;                                      // Main JFrame where everything is put on top of
     private int width, height;                                  // Window Dimensions
@@ -26,12 +22,9 @@ public class Window {
     Find find;                                                  // Find dialog
     JMenuItem open;                                             // File -> Open
 
-<<<<<<< Updated upstream
-=======
     private JFileChooser fc;                                    // File chooser
     //private FileEx fileEx;//me
 
->>>>>>> Stashed changes
     // UserInput variables
     private UserInput userInput;                                // Form for user input
 
@@ -45,7 +38,7 @@ public class Window {
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
         public final String voiceString;                        // Unmodifiable value
-        Voice(String vS){                   // Enum constructor
+        Voice(String vS){                                       // Enum constructor
             this.voiceString = vS;
         }
     }
@@ -89,11 +82,7 @@ public class Window {
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
     private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
-<<<<<<< Updated upstream
 
-=======
-  
->>>>>>> Stashed changes
     // Initializing all of the UI elements in Window
     private void initUI(){
         // Initializing JFrame
@@ -130,7 +119,6 @@ public class Window {
         jMenuBar.add(settings);
         file.add(open);
         settings.add(about);
-
         jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
         makeListeners();                             // Creates action listeners
 
@@ -157,7 +145,9 @@ public class Window {
                 }
 
                 // Displays the text
-//                JOptionPane.showMessageDialog(jFrame, text);
+                JOptionPane.showMessageDialog(jFrame, text);
+                find = new Find();
+                find.setSize(500, 150);
                 find.setVisible(true);
             }
         });
