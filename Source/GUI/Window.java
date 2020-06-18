@@ -127,9 +127,11 @@ public class Window extends JFrame {
 
         find = new Find();                                       // Creating Find Dialog
         find.setSize(500, 150);                      // Setting Dialog Size
+        find.setLocationRelativeTo(null);                        // Centers Dialog
 
         dictionary = new Dictionary();                           // Creating Dictionary Dialog
         dictionary.setSize(500, 150);                // Setting Dialog Size
+        dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
