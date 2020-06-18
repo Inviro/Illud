@@ -136,8 +136,11 @@ public class Window extends Component {
         jFrame.setJMenuBar(jMenuBar);                            // Sets the menu bar
         makeListeners();                                         // Creates action listeners
 
-        // Creating Find Dialog
-        find = new Find();
+
+        find = new Find();                                       // Creating Find Dialog
+
+        // Creating File Chooser
+        fc = new JFileChooser();                                 // New file chooser object
     }
 
     // Makes listeners for UserInput
@@ -190,8 +193,6 @@ public class Window extends Component {
         open_menu_item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                fc = new JFileChooser(); // New file chooser object
-
                 // Opens the dialog for the file chooser
                 int returnVal = fc.showOpenDialog(Window.this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
