@@ -7,12 +7,12 @@ import javax.swing.event.DocumentEvent;                         // Used for gett
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
 import java.awt.*;
-import java.awt.event.ActionEvent;                              // Used to handle events
-import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
+import java.awt.event.ActionEvent;                              // Used to handle events
+import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
 
 public class Window extends Component {
@@ -83,8 +83,8 @@ public class Window extends Component {
 
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
-    private void endSpeak() { tts.stopSpeaking(); }                                         // Ends MaryTTS playback
-
+    private void endSpeak() { tts.stopSpeaking(); }                             // Ends MaryTTS playback
+  
     // Initializing all of the UI elements in Window
     private void initUI(){
         // Initializing JFrame
@@ -150,6 +150,9 @@ public class Window extends Component {
         settings.add(about);
         jFrame.setJMenuBar(jMenuBar);                // Sets the menu bar
         makeListeners();                             // Creates action listeners
+
+        // Creating Find Dialog
+        find = new Find();
     }
 
     // Makes listeners for UserInput
@@ -172,11 +175,9 @@ public class Window extends Component {
 
                 // Displays the text
 //                JOptionPane.showMessageDialog(jFrame, text);
-
                 find = new Find();
                 find.setSize(500, 150);
                 find.setVisible(true);
-
             }
         });
 
