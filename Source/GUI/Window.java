@@ -140,18 +140,19 @@ public class Window extends Component {
 
 
         find = new Find();                                       // Creating Find Dialog
+        find.setSize(500, 150);
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
 
         // Setting acceptable file types
-        fc.setAcceptAllFileFilterUsed(false);                    // Does not accept all file types
+//        fc.setAcceptAllFileFilterUsed(false);                    // Does not accept all file types
         acceptedTypes = new Vector<>();                          // Holds accepted file types
-        acceptedTypes.add(".txt");                               // Text files
+        acceptedTypes.add("txt");                                // Text files
         fc.setFileFilter(new FileFilter() {                      // Creates a new filter
             @Override
             public boolean accept(File f) {
-                if (f.isDirectory()){                            // Allows folder to be selected
+                if (f.isDirectory()){                            // Allows folders to be selected
                     return true;
                 } else{
                     String filename = f.getName().toLowerCase();
@@ -168,7 +169,7 @@ public class Window extends Component {
                 // Creating accepted file type descriptions
                 String temp = "Text Files ";
                 for(String ele: acceptedTypes) {              // For each accepted file type
-                    temp += "(*." + ele + ")";
+                    temp += "(*." + ele + ") ";
                 }
                 return temp;
             }
@@ -182,23 +183,17 @@ public class Window extends Component {
         JButton jButton = userInput.getPressMeButton();
 
         // Creates action listener for jButton
-        jButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) { // Runs on button click
-                // Gets Text from jTextArea
-                String text = jTextArea.getText();
+        jButton.addActionListener(e -> { // Runs on button click
+            // Gets Text from jTextArea
+            String text = jTextArea.getText();
 
-                // Uses TTS on the text
-                if(!text.equals("")){ // Makes sure that there is text to be read
-                    speak(text);
-                }
-
-                // Displays the text
-                JOptionPane.showMessageDialog(jFrame, text);
-                find = new Find();
-                find.setSize(500, 150);
-                find.setVisible(true);
+            // Uses TTS on the text
+            if(!text.equals("")){ // Makes sure that there is text to be read
+                speak(text);
             }
+
+            // Displays the text
+            JOptionPane.showMessageDialog(jFrame, text);
         });
 
         JList list = userInput.getJList();
@@ -222,28 +217,30 @@ public class Window extends Component {
         });
 
         // Listener for File > Open
-        open_menu_item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Opens the dialog for the file chooser
-                int returnVal = fc.showOpenDialog(Window.this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    System.out.println("Opening: " + file.getName() + ".\n");
+        open_menu_item.addActionListener(e -> {
+            // Opens the dialog for the file chooser
+            int returnVal = fc.showOpenDialog(Window.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                System.out.println("Opening: " + file.getName() + ".\n");
 
-                    // Reading file into a string
-                    Scanner scanner = null;
-                    try {
-                        scanner = new Scanner(file);
-                    } catch (FileNotFoundException fileNotFoundException) {
-                        fileNotFoundException.printStackTrace();
-                    }
-                    String fileText = scanner.useDelimiter("\\A").next();
-                    scanner.close();
-
-                    userInput.setFile(fileText); // Puts string from file into main text area
+                // Reading file into a string
+                Scanner scanner = null;
+                try {
+                    scanner = new Scanner(file);
+                } catch (FileNotFoundException fileNotFoundException) {
+                    fileNotFoundException.printStackTrace();
                 }
+                String fileText = scanner.useDelimiter("\\A").next();
+                scanner.close();
+
+                userInput.setFile(fileText); // Puts string from file into main text area
             }
+        });
+
+        // Listener for Action > Find
+        find_menu_item.addActionListener(e -> {
+            find.setVisible(true);
         });
     }
 
