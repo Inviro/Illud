@@ -20,7 +20,13 @@ public class Window extends Component {
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
     Find find;                                                  // Find dialog
-    JMenuItem open;                                             // File -> Open
+
+    // JMenuItems to add listeners to in the menu
+    JMenuItem open_menu_item;
+    JMenuItem dict_menu_item;
+    JMenuItem find_menu_item;
+    JMenuItem tts_menu_item;
+    JMenuItem about_menu_item;
 
     private JFileChooser fc;                                    // File chooser
     //private FileEx fileEx;//me
@@ -110,23 +116,23 @@ public class Window extends Component {
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         JMenuBar jMenuBar = new JMenuBar();
         JMenu file = new JMenu("File");                       // "File"
-        open = new JMenuItem("Open");                       // "File > Open"
+        open_menu_item = new JMenuItem("Open");             // "File > Open"
         JMenu actions = new JMenu("Actions");                 // "Actions"
-        JMenuItem dict = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
-        JMenuItem findText = new JMenuItem("Find");         // "Actions" > "Find"
-        JMenuItem tts = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
+        dict_menu_item = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
+        find_menu_item = new JMenuItem("Find");             // "Actions" > "Find"
+        tts_menu_item = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
         JMenu settings = new JMenu("Settings");               // "Settings"
-        JMenuItem about = new JMenuItem("About");           // "Settings" > About"
+        about_menu_item = new JMenuItem("About");           // "Settings" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(actions);
         jMenuBar.add(settings);
-        file.add(open);
-        actions.add(dict);
-        actions.add(findText);
-        actions.add(tts);
-        settings.add(about);
+        file.add(open_menu_item);
+        actions.add(dict_menu_item);
+        actions.add(find_menu_item);
+        actions.add(tts_menu_item);
+        settings.add(about_menu_item);
         jFrame.setJMenuBar(jMenuBar);                            // Sets the menu bar
         makeListeners();                                         // Creates action listeners
 
@@ -181,7 +187,7 @@ public class Window extends Component {
         });
 
         // Listener for File > Open
-        open.addActionListener(new ActionListener() {
+        open_menu_item.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 fc = new JFileChooser(); // New file chooser object
