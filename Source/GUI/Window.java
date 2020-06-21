@@ -133,8 +133,8 @@ public class Window extends JFrame {
         dictionary.setSize(500, 150);                // Setting Dialog Size
         dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
-        about = new About();                                     // Creating Dictionary Dialog
-        about.setSize(600, 300);                     // Setting Dialog Size
+        about = new About();                                     // Creating About Dialog
+        about.setSize(600, 320);                     // Setting Dialog Size
         about.setLocationRelativeTo(null);                       // Centers Dialog
 
         // Creating File Chooser
@@ -142,6 +142,7 @@ public class Window extends JFrame {
 
         // Setting acceptable file types
 //        fc.setAcceptAllFileFilterUsed(false);                  // Does not accept all file types
+
         acceptedTypes = new Vector<>();                          // Holds accepted file types
         acceptedTypes.add("txt");                                // Text files
         fc.setFileFilter(new FileFilter() {                      // Creates a new filter
