@@ -15,16 +15,18 @@ public class Window extends JFrame {
     // Window Variables
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
+    private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
-    Find find;                                                  // Find dialog
-    Dictionary dictionary;                                      // Dictionary dialog
+    private Find find;                                          // Find dialog
+    private Dictionary dictionary;                              // Dictionary dialog
+    private About about;                                        // About dialog
 
     // JMenuItems to add listeners to in the menu
-    JMenuItem open_menu_item;
-    JMenuItem dict_menu_item;
-    JMenuItem find_menu_item;
-    JMenuItem tts_menu_item;
-    JMenuItem about_menu_item;
+    private JMenuItem open_menu_item;
+    private JMenuItem dict_menu_item;
+    private JMenuItem find_menu_item;
+    private JMenuItem tts_menu_item;
+    private JMenuItem about_menu_item;
 
     private JFileChooser fc;                                    // File chooser
     private Vector<String> acceptedTypes;
@@ -68,7 +70,7 @@ public class Window extends JFrame {
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
         tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
-        volume = 1.0f;                                          // Sets volume to a default number
+        this.volume = 1.0f;                                     // Sets volume to a default number
         initUI();                                               // Initializes the User Interface
     }
 
@@ -81,13 +83,12 @@ public class Window extends JFrame {
         // Initializing JFrame
         this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
+        illudIcon = new ImageIcon(                              // New icon image composed of:
+                        getClass()                              // From the instance of current class:
+                        .getResource(ICON_PATH));               // Get the resource at ICON_PATH
+
         // Setting Icon image in the JFrame
-        this.setIconImage(                                      // Sets icon image
-                new ImageIcon(                                  // To a new icon image composed of:
-                        getClass()                              // The current class:
-                        .getResource(ICON_PATH))                // Resource at ICON_PATH
-                        .getImage()                             // Image from resource
-        );
+        this.setIconImage(illudIcon.getImage());
 
         userInput = new UserInput();                            // Creates new instance of UserInput
         this.setContentPane(userInput.getMainPanel());          // Sets content pane to new instance of UserInput
@@ -109,18 +110,18 @@ public class Window extends JFrame {
         dict_menu_item = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
         find_menu_item = new JMenuItem("Find");             // "Actions" > "Find"
         tts_menu_item = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
-        JMenu settings = new JMenu("Settings");               // "Settings"
-        about_menu_item = new JMenuItem("About");           // "Settings" > About"
+        JMenu help = new JMenu("Help");                       // "Help"
+        about_menu_item = new JMenuItem("About");           // "Help" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(actions);
-        jMenuBar.add(settings);
+        jMenuBar.add(help);
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
         actions.add(tts_menu_item);
-        settings.add(about_menu_item);
+        help.add(about_menu_item);
         this.setJMenuBar(jMenuBar);                              // Sets the menu bar
         makeListeners();                                         // Creates action listeners
 
@@ -132,11 +133,15 @@ public class Window extends JFrame {
         dictionary.setSize(500, 150);                // Setting Dialog Size
         dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
+        about = new About();                                     // Creating About Dialog
+        about.setIconImage(illudIcon.getImage());                // Sets Icon to Illud Icon
+
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
 
         // Setting acceptable file types
 //        fc.setAcceptAllFileFilterUsed(false);                  // Does not accept all file types
+
         acceptedTypes = new Vector<>();                          // Holds accepted file types
         acceptedTypes.add("txt");                                // Text files
         fc.setFileFilter(new FileFilter() {                      // Creates a new filter
@@ -170,21 +175,6 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-        JButton jButton = userInput.getPressMeButton();
-
-        // Creates action listener for jButton
-        jButton.addActionListener(e -> { // Runs on button click
-            // Gets Text from jTextArea
-            String text = jTextArea.getText();
-
-            // Uses TTS on the text
-            if(!text.equals("")){ // Makes sure that there is text to be read
-                speak(text);
-            }
-
-            // Displays the text
-            JOptionPane.showMessageDialog(this, text);
-        });
 
         JList list = userInput.getJList();
         Document doc = jTextArea.getDocument();
@@ -238,6 +228,23 @@ public class Window extends JFrame {
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
             dictionary.setVisible(true);
+        });
+
+        // Listener for Action > Dictionary
+        about_menu_item.addActionListener(e -> {
+            about.setVisible(true);
+        });
+
+        tts_menu_item.addActionListener(e -> {
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            // No text highlighted
+            if(text == null){           // If text is null end TTS playback
+                endSpeak();
+            } else if (text != ""){     // Checks if text is not empty
+                speak(text);            // Uses TTS on the text
+            }
         });
     }
 
