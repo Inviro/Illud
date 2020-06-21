@@ -27,7 +27,6 @@ public class Window extends JFrame {
     JMenuItem about_menu_item;
 
     private JFileChooser fc;                                    // File chooser
-    //private FileEx fileEx;//me
     private Vector<String> acceptedTypes;
 
     // UserInput variables
@@ -217,13 +216,16 @@ public class Window extends JFrame {
                 // Reading file into a string
                 Scanner scanner = null;
                 try {
-                    scanner = new Scanner(file);
+                    scanner = new Scanner(file, "utf-8");
                 } catch (FileNotFoundException fileNotFoundException) {
                     fileNotFoundException.printStackTrace();
                 }
-                String fileText = scanner.next();
+                String fileText = scanner
+                        .useDelimiter("\\A")                        // Delimiter - End of Line
+                        .next()                                     // Next input
+                        .replace("\r", "");         // Removes extra CR
                 scanner.close();
-
+                fileText = fileText;
                 userInput.setFile(fileText); // Puts string from file into main text area
             }
         });
