@@ -18,6 +18,7 @@ public class Window extends JFrame {
 
     Find find;                                                  // Find dialog
     Dictionary dictionary;                                      // Dictionary dialog
+    About about;                                                // About dialog
 
     // JMenuItems to add listeners to in the menu
     JMenuItem open_menu_item;
@@ -132,6 +133,10 @@ public class Window extends JFrame {
         dictionary.setSize(500, 150);                // Setting Dialog Size
         dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
+        about = new About();                                     // Creating Dictionary Dialog
+        about.setSize(600, 300);                     // Setting Dialog Size
+        about.setLocationRelativeTo(null);                       // Centers Dialog
+
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
 
@@ -238,6 +243,11 @@ public class Window extends JFrame {
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
             dictionary.setVisible(true);
+        });
+
+        // Listener for Action > Dictionary
+        about_menu_item.addActionListener(e -> {
+            about.setVisible(true);
         });
     }
 
