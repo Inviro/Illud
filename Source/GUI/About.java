@@ -43,17 +43,13 @@ public class About extends JDialog {
                 }
             }
         });
+
+        this.setSize(600, 320);                     // Setting Dialog Size
+        this.setLocationRelativeTo(null);                       // Centers Dialog
     }
 
     private void onOK() {
         // add your code here
         dispose();
-    }
-
-    public static void main(String[] args) {
-        About dialog = new About();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
     }
 }

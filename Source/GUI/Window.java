@@ -134,8 +134,6 @@ public class Window extends JFrame {
         dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
         about = new About();                                     // Creating About Dialog
-        about.setSize(600, 320);                     // Setting Dialog Size
-        about.setLocationRelativeTo(null);                       // Centers Dialog
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
