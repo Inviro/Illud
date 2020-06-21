@@ -15,17 +15,18 @@ public class Window extends JFrame {
     // Window Variables
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
+    private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
-    Find find;                                                  // Find dialog
-    Dictionary dictionary;                                      // Dictionary dialog
-    About about;                                                // About dialog
+    private Find find;                                          // Find dialog
+    private Dictionary dictionary;                              // Dictionary dialog
+    private About about;                                        // About dialog
 
     // JMenuItems to add listeners to in the menu
-    JMenuItem open_menu_item;
-    JMenuItem dict_menu_item;
-    JMenuItem find_menu_item;
-    JMenuItem tts_menu_item;
-    JMenuItem about_menu_item;
+    private JMenuItem open_menu_item;
+    private JMenuItem dict_menu_item;
+    private JMenuItem find_menu_item;
+    private JMenuItem tts_menu_item;
+    private JMenuItem about_menu_item;
 
     private JFileChooser fc;                                    // File chooser
     private Vector<String> acceptedTypes;
@@ -69,7 +70,7 @@ public class Window extends JFrame {
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
         tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
-        volume = 1.0f;                                          // Sets volume to a default number
+        this.volume = 1.0f;                                     // Sets volume to a default number
         initUI();                                               // Initializes the User Interface
     }
 
@@ -82,13 +83,12 @@ public class Window extends JFrame {
         // Initializing JFrame
         this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
+        illudIcon = new ImageIcon(                              // New icon image composed of:
+                        getClass()                              // From the instance of current class:
+                        .getResource(ICON_PATH));               // Get the resource at ICON_PATH
+
         // Setting Icon image in the JFrame
-        this.setIconImage(                                      // Sets icon image
-                new ImageIcon(                                  // To a new icon image composed of:
-                        getClass()                              // The current class:
-                        .getResource(ICON_PATH))                // Resource at ICON_PATH
-                        .getImage()                             // Image from resource
-        );
+        this.setIconImage(illudIcon.getImage());
 
         userInput = new UserInput();                            // Creates new instance of UserInput
         this.setContentPane(userInput.getMainPanel());          // Sets content pane to new instance of UserInput
@@ -134,6 +134,7 @@ public class Window extends JFrame {
         dictionary.setLocationRelativeTo(null);                  // Centers Dialog
 
         about = new About();                                     // Creating About Dialog
+        about.setIconImage(illudIcon.getImage());                // Sets Icon to Illud Icon
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object

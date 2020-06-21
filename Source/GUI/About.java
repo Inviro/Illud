@@ -46,6 +46,7 @@ public class About extends JDialog {
 
         this.setSize(600, 320);                     // Setting Dialog Size
         this.setLocationRelativeTo(null);                       // Centers Dialog
+        this.setTitle("About");                                 // Sets Dialog Title
     }
 
     private void onOK() {
