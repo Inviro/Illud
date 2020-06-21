@@ -110,18 +110,18 @@ public class Window extends JFrame {
         dict_menu_item = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
         find_menu_item = new JMenuItem("Find");             // "Actions" > "Find"
         tts_menu_item = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
-        JMenu settings = new JMenu("Settings");               // "Settings"
-        about_menu_item = new JMenuItem("About");           // "Settings" > About"
+        JMenu help = new JMenu("Help");                       // "Help"
+        about_menu_item = new JMenuItem("About");           // "Help" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(actions);
-        jMenuBar.add(settings);
+        jMenuBar.add(help);
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
         actions.add(tts_menu_item);
-        settings.add(about_menu_item);
+        help.add(about_menu_item);
         this.setJMenuBar(jMenuBar);                              // Sets the menu bar
         makeListeners();                                         // Creates action listeners
 
@@ -174,21 +174,6 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-        JButton jButton = userInput.getPressMeButton();
-
-        // Creates action listener for jButton
-        jButton.addActionListener(e -> { // Runs on button click
-            // Gets Text from jTextArea
-            String text = jTextArea.getText();
-
-            // Uses TTS on the text
-            if(!text.equals("")){ // Makes sure that there is text to be read
-                speak(text);
-            }
-
-            // Displays the text
-            JOptionPane.showMessageDialog(this, text);
-        });
 
         JList list = userInput.getJList();
         Document doc = jTextArea.getDocument();
@@ -247,6 +232,18 @@ public class Window extends JFrame {
         // Listener for Action > Dictionary
         about_menu_item.addActionListener(e -> {
             about.setVisible(true);
+        });
+
+        tts_menu_item.addActionListener(e -> {
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            // No text highlighted
+            if(text == null){           // If text is null end TTS playback
+                endSpeak();
+            } else if (text != ""){     // Checks if text is not empty
+                speak(text);            // Uses TTS on the text
+            }
         });
     }
 
