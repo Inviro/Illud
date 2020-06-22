@@ -118,29 +118,26 @@ public class Window extends JFrame {
         about_menu_item = new JMenuItem("About");              // "Help" > About"
 
         // Listener for File > Open
-        open.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                fc = new JFileChooser(); // New file chooser object
+        open_menu_item.addActionListener(e -> {
+            fc = new JFileChooser(); // New file chooser object
 
-                // Opens the dialog for the file chooser
-                int returnVal = fc.showOpenDialog(Window.this);
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
-                    System.out.println("Opening: " + file.getName() + "." + newline);
+            // Opens the dialog for the file chooser
+            int returnVal = fc.showOpenDialog(Window.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file1 = fc.getSelectedFile();
+                System.out.println("Opening: " + file1.getName() + "." + newline);
 
-                    // Reading file into a string
-                    Scanner scanner = null;
-                    try {
-                        scanner = new Scanner(file);
-                    } catch (FileNotFoundException fileNotFoundException) {
-                        fileNotFoundException.printStackTrace();
-                    }
-                    String fileText = scanner.useDelimiter("\\A").next();
-                    scanner.close();
-
-                    userInput.setFile(fileText); // Puts string from file into main text area
+                // Reading file into a string
+                Scanner scanner = null;
+                try {
+                    scanner = new Scanner(file1);
+                } catch (FileNotFoundException fileNotFoundException) {
+                    fileNotFoundException.printStackTrace();
                 }
+                String fileText = scanner.useDelimiter("\\A").next();
+                scanner.close();
+
+                userInput.setFile(fileText); // Puts string from file into main text area
             }
         });
 
