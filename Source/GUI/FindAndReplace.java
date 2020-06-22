@@ -3,7 +3,7 @@ package Source.GUI;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
-public class FindandReplace extends JDialog{
+public class FindAndReplace extends JDialog{
     private JPanel findAndReplace;
     private JButton buttonFind;
     private JTextField t1;
@@ -11,7 +11,7 @@ public class FindandReplace extends JDialog{
     private JCheckBox simpleReplace;
     private JTextArea area;
 
-    public FindandReplace(JTextArea area) {
+    public FindAndReplace(JTextArea area) {
         this.area = area;
         setContentPane(findAndReplace);
         setModal(true);

@@ -16,7 +16,7 @@ public class Window extends JFrame {
     private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
     private Find find;                                          // Find dialog
-    private FindandReplace findandReplace;                      // Find and Replace dialog
+    private FindAndReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
     private FileOpener fileOpener;                              // Opens files
@@ -129,7 +129,7 @@ public class Window extends JFrame {
         find.setSize(500, 150);                                 // Setting Dialog Size
         find.setLocationRelativeTo(null);                                   // Centers Dialog
 
-        findandReplace = new FindandReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
+        findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
         findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
