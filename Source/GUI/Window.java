@@ -20,6 +20,7 @@ public class Window extends JFrame {
     private Find find;                                          // Find dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
+    private FindandReplace findandReplace;                      // Find and Replace dialog
 
     // JMenuItems to add listeners to in the menu
     private JMenuItem open_menu_item;
@@ -135,6 +136,9 @@ public class Window extends JFrame {
 
         about = new About();                                     // Creating About Dialog
         about.setIconImage(illudIcon.getImage());                // Sets Icon to Illud Icon
+
+        findandReplace = new FindandReplace();
+        findandReplace.setIconImage(illudIcon.getImage());       // Sets Icon to Illud Icon
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
