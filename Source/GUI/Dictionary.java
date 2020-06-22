@@ -76,17 +76,40 @@ public class Dictionary extends JDialog {
             JSONParser jsonParser = new JSONParser(); //creating new JSON parser
 
             URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/hello"); //Creates URL Object
-            //FileReader reader = new FileReader(".\\Resources\\hello.json");    //this is a test to read local JSON File
+            // FileReader reader = new FileReader(".\\Resources\\hello.json");    //this is a test to read local JSON File
             BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
             Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
 
             JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
-            JSONObject defJSON = (JSONObject) array.get(0); //Making array into object. defJSON should contain all objects from the webpage
+            JSONObject dictJSON = (JSONObject) array.get(0); //Making array into object. defJSON should contain all objects from the webpage
 
-            //getting information from JSON Object
-            String word = (String) defJSON.get("word");
-            System.out.println(word);
+            // getting information from JSON Object
+            String word = (String) dictJSON.get("word"); //getting word
+            System.out.println("word: " + word);
+
+            // getting info from meanings array
+            JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
+            for (int i=0; i<meaningArray.size(); i++){
+                System.out.println("Definition " + (i+1));
+
+                JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
+
+                String type = (String) temp.get("partOfSpeech");  //type of speech
+                System.out.println("Type of word: " + type);
+
+                // making definition array into JSON Object
+                JSONArray defArray = (JSONArray) temp.get("definitions");
+                for (int j=0; j<defArray.size(); j++){
+                    JSONObject defJSON = (JSONObject) defArray.get(j);
+                    String definition = (String) defJSON.get("definition");
+                    System.out.println("Definition: " + definition);
+                }
+                System.out.println("");
+
+            }
+
+
         }
         //Exceptions
         catch (MalformedURLException e){
