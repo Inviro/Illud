@@ -1,14 +1,12 @@
 package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
+import Source.Logic.FileOpener;
+
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
-import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;                               // Used to listen for text change
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.Vector;                                        // Used for JList
 
 public class Window extends JFrame {
@@ -18,9 +16,10 @@ public class Window extends JFrame {
     private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
     private Find find;                                          // Find dialog
-    private FindandReplace findandReplace;                      // Find and Replace dialog
+    private FindAndReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
+    private FileOpener fileOpener;                              // Opens files
 
     // JMenuItems to add listeners to in the menu
     private JMenuItem open_menu_item;
@@ -30,10 +29,6 @@ public class Window extends JFrame {
     private JMenuItem tts_menu_item;
     private JMenuItem about_menu_item;
 
-    private JFileChooser fc;                                    // File chooser
-    private Vector<String> acceptedTypes;
-    static private final String newline = "\n";
-
     // UserInput variables
     private UserInput userInput;                                // Form for user input
 
@@ -42,7 +37,7 @@ public class Window extends JFrame {
     private float volume;                                       // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
-    public enum Voice{
+    private enum Voice{
         poppy("dfki-poppy-hsmm"),
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
@@ -117,30 +112,6 @@ public class Window extends JFrame {
         JMenu help = new JMenu("Help");                               // "Help"
         about_menu_item = new JMenuItem("About");                   // "Help" > About"
 
-        // Listener for File > Open
-        open_menu_item.addActionListener(e -> {
-            fc = new JFileChooser(); // New file chooser object
-
-            // Opens the dialog for the file chooser
-            int returnVal = fc.showOpenDialog(Window.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file1 = fc.getSelectedFile();
-                System.out.println("Opening: " + file1.getName() + "." + newline);
-
-                // Reading file into a string
-                Scanner scanner = null;
-                try {
-                    scanner = new Scanner(file1);
-                } catch (FileNotFoundException fileNotFoundException) {
-                    fileNotFoundException.printStackTrace();
-                }
-                String fileText = scanner.useDelimiter("\\A").next();
-                scanner.close();
-
-                userInput.setFile(fileText); // Puts string from file into main text area
-            }
-        });
-
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(actions);
@@ -158,7 +129,7 @@ public class Window extends JFrame {
         find.setSize(500, 150);                                 // Setting Dialog Size
         find.setLocationRelativeTo(null);                                   // Centers Dialog
 
-        findandReplace = new FindandReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
+        findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
         findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
@@ -168,39 +139,7 @@ public class Window extends JFrame {
         about = new About();                                                // Creating About Dialog
         about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
 
-        // Creating File Chooser
-        fc = new JFileChooser();                                            // New file chooser object
-
-        // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
-
-        acceptedTypes = new Vector<>();                                     // Holds accepted file types
-        acceptedTypes.add("txt");                                           // Text files
-        fc.setFileFilter(new FileFilter() {                                 // Creates a new filter
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()){                                       // Allows folders to be selected
-                    return true;
-                } else{
-                    String filename = f.getName().toLowerCase();
-                    for(String ele: acceptedTypes){                         // For each accepted file type
-                        if (filename.endsWith(ele)){                        // Returns true if suffix type is accepted
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-            @Override
-            public String getDescription() {
-                // Creating accepted file type descriptions
-                String temp = "Text Files ";
-                for(String ele: acceptedTypes) {                            // For each accepted file type
-                    temp += "(*." + ele + ") ";
-                }
-                return temp;
-            }
-        });
+        fileOpener = new FileOpener();                                      // Creating file handler object
     }
 
     // Makes listeners for UserInput
@@ -230,25 +169,7 @@ public class Window extends JFrame {
 
         // Listener for File > Open
         open_menu_item.addActionListener(e -> {
-            // Opens the dialog for the file chooser
-            int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-
-                // Reading file into a string
-                Scanner scanner = null;
-                try {
-                    scanner = new Scanner(file, "utf-8");
-                } catch (FileNotFoundException fileNotFoundException) {
-                    fileNotFoundException.printStackTrace();
-                }
-                String fileText = scanner
-                        .useDelimiter("\\A")                        // Delimiter - End of Line
-                        .next()                                     // Next input
-                        .replace("\r", "");         // Removes extra CR
-                scanner.close();
-                userInput.setFile(fileText); // Puts string from file into main text area
-            }
+            fileOpener.activate(this, userInput);
         });
 
         // Listener for Action > Find
@@ -285,12 +206,7 @@ public class Window extends JFrame {
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
-        Vector<String> result = new Vector<>();
-        result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
-        result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
-        result.add(CounterUtil.lineCounter(jTextArea) + " lines\n");
-        result.add(CounterUtil.paragraphCounter(jTextArea) + " paragraphs\n");
-        result.add(CounterUtil.sentenceCounter(jTextArea) + " sentences\n");
-        jList.setListData(result);
+        String currentText = jTextArea.getText();
+        jList.setListData(CounterUtil.getCounterData(currentText));
     }
 }
