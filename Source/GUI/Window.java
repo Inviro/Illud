@@ -222,7 +222,6 @@ public class Window extends JFrame {
                         .next()                                     // Next input
                         .replace("\r", "");         // Removes extra CR
                 scanner.close();
-                fileText = fileText;
                 userInput.setFile(fileText); // Puts string from file into main text area
             }
         });
