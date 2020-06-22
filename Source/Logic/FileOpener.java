@@ -63,11 +63,11 @@ public class FileOpener {
             } catch (Exception e) { e.printStackTrace(); }
             if(scanner.hasNext()){
                 String fileText = scanner
-                        .useDelimiter("\\A")                        // Delimiter - End of Line
-                        .next()                                     // Next input
-                        .replace("\r", "");         // Removes extra CR
+                        .useDelimiter("\\A")                                // Delimiter - End of Line
+                        .next()                                             // Next input
+                        .replace("\r", "");                 // Removes extra CR
                 scanner.close();
-                userInput.setFile(fileText); // Puts string from file into main text area
+                userInput.setFile(fileText);                                // Puts string from file into main text area
             }
         }
     }

@@ -206,13 +206,7 @@ public class Window extends JFrame {
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
-        Vector<String> result = new Vector<>();
         String currentText = jTextArea.getText();
-        result.add(CounterUtil.characterCounter(currentText) + " characters\n");
-        result.add(CounterUtil.wordCounter(currentText) + " words\n");
-        result.add(CounterUtil.lineCounter(currentText) + " lines\n");
-        result.add(CounterUtil.paragraphCounter(currentText) + " paragraphs\n");
-        result.add(CounterUtil.sentenceCounter(currentText) + " sentences\n");
-        jList.setListData(result);
+        jList.setListData(CounterUtil.getCounterData(currentText));
     }
 }
