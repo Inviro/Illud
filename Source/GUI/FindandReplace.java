@@ -42,12 +42,12 @@ public class FindandReplace {
 //    }
 
     public JPanel getFindAndReplace(JTextArea copy) {
-        String f = copy.getText();
-        ta1.setText(f);
+        String g = copy.getText();
+        ta1.setText(g);
         return findAndReplace;
     }
 
-
-
-
+    public JTextArea getTa1() {
+        return ta1;
+    }
 }
