@@ -2,7 +2,7 @@ package Source.GUI;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import java.awt.*;
+import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.File;
 

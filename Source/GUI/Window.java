@@ -18,7 +18,7 @@ public class Window extends JFrame {
     private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
     private Find find;                                          // Find dialog
-    private FindandReplace findAndReplace;                      // Find and Replace dialog
+    private FindandReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
 
@@ -26,7 +26,7 @@ public class Window extends JFrame {
     private JMenuItem open_menu_item;
     private JMenuItem dict_menu_item;
     private JMenuItem find_menu_item;
-    private JMenuItem find_and_rep_item;
+    private JMenuItem find_replace_menu_item;
     private JMenuItem tts_menu_item;
     private JMenuItem about_menu_item;
 
@@ -106,15 +106,15 @@ public class Window extends JFrame {
         // A jMenu for example would be "File" or something you would see inside the bar
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         JMenuBar jMenuBar = new JMenuBar();
-        JMenu file = new JMenu("File");                          // "File"
-        open_menu_item = new JMenuItem("Open");                // "File > Open"
-        JMenu actions = new JMenu("Actions");                    // "Actions"
-        dict_menu_item = new JMenuItem("Dictionary");          // "Actions" > "Dictionary"
-        find_menu_item = new JMenuItem("Find");                // "Actions" > "Find"
-        find_and_rep_item = new JMenuItem("Find and Replace"); // "Actions > "Find and Replace
-        tts_menu_item = new JMenuItem("Text To Speech");       // "Actions" > "Text to Speech"
-        JMenu help = new JMenu("Help");                          // "Help"
-        about_menu_item = new JMenuItem("About");              // "Help" > About"
+        JMenu file = new JMenu("File");                               // "File"
+        open_menu_item = new JMenuItem("Open");                     // "File > Open"
+        JMenu actions = new JMenu("Actions");                         // "Actions"
+        dict_menu_item = new JMenuItem("Dictionary");               // "Actions" > "Dictionary"
+        find_menu_item = new JMenuItem("Find");                     // "Actions" > "Find"
+        find_replace_menu_item = new JMenuItem("Find and Replace"); // "Actions" > "Find and Replace"
+        tts_menu_item = new JMenuItem("Text To Speech");            // "Actions" > "Text to Speech"
+        JMenu help = new JMenu("Help");                               // "Help"
+        about_menu_item = new JMenuItem("About");                   // "Help" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
@@ -123,45 +123,43 @@ public class Window extends JFrame {
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
-        actions.add(find_and_rep_item);
+        actions.add(find_replace_menu_item);
         actions.add(tts_menu_item);
         help.add(about_menu_item);
-        this.setJMenuBar(jMenuBar);                              // Sets the menu bar
-        makeListeners();                                         // Creates action listeners
+        this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
+        makeListeners();                                                    // Creates action listeners
 
-        find = new Find();                                       // Creating Find Dialog
-        find.setSize(500, 150);                      // Setting Dialog Size
-        find.setLocationRelativeTo(null);                        // Centers Dialog
+        find = new Find();                                                  // Creating Find Dialog
+        find.setSize(500, 150);                                 // Setting Dialog Size
+        find.setLocationRelativeTo(null);                                   // Centers Dialog
 
-        findAndReplace = new FindandReplace();                   // Creating Find and Replace Dialog
-        findAndReplace.setSize(600, 150);                      // Setting Dialog Size
-        findAndReplace.setLocationRelativeTo(null);                        // Centers Dialog
+        findandReplace = new FindandReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
+        findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
+        dictionary = new Dictionary();                                      // Creating Dictionary Dialog
+        dictionary.setSize(500, 150);                           // Setting Dialog Size
+        dictionary.setLocationRelativeTo(null);                             // Centers Dialog
 
-        dictionary = new Dictionary();                           // Creating Dictionary Dialog
-        dictionary.setSize(500, 150);                // Setting Dialog Size
-        dictionary.setLocationRelativeTo(null);                  // Centers Dialog
-
-        about = new About();                                     // Creating About Dialog
-        about.setIconImage(illudIcon.getImage());                // Sets Icon to Illud Icon
+        about = new About();                                                // Creating About Dialog
+        about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
 
         // Creating File Chooser
-        fc = new JFileChooser();                                 // New file chooser object
+        fc = new JFileChooser();                                            // New file chooser object
 
         // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                  // Does not accept all file types
+//        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
 
-        acceptedTypes = new Vector<>();                          // Holds accepted file types
-        acceptedTypes.add("txt");                                // Text files
-        fc.setFileFilter(new FileFilter() {                      // Creates a new filter
+        acceptedTypes = new Vector<>();                                     // Holds accepted file types
+        acceptedTypes.add("txt");                                           // Text files
+        fc.setFileFilter(new FileFilter() {                                 // Creates a new filter
             @Override
             public boolean accept(File f) {
-                if (f.isDirectory()){                            // Allows folders to be selected
+                if (f.isDirectory()){                                       // Allows folders to be selected
                     return true;
                 } else{
                     String filename = f.getName().toLowerCase();
-                    for(String ele: acceptedTypes){              // For each accepted file type
-                        if (filename.endsWith(ele)){             // Returns true if suffix is accepted file type
+                    for(String ele: acceptedTypes){                         // For each accepted file type
+                        if (filename.endsWith(ele)){                        // Returns true if suffix type is accepted
                             return true;
                         }
                     }
@@ -172,7 +170,7 @@ public class Window extends JFrame {
             public String getDescription() {
                 // Creating accepted file type descriptions
                 String temp = "Text Files ";
-                for(String ele: acceptedTypes) {              // For each accepted file type
+                for(String ele: acceptedTypes) {                            // For each accepted file type
                     temp += "(*." + ele + ") ";
                 }
                 return temp;
@@ -235,9 +233,8 @@ public class Window extends JFrame {
         });
 
         // Listener for Action > Find and Replace
-        find_and_rep_item.addActionListener(e -> {
-            findAndReplace.setVisible(true);
-            findAndReplace.setFindAndReplace(userInput.getMainTextArea()); // Set find and replace text area to mainTextArea
+        find_replace_menu_item.addActionListener(e -> {
+            findandReplace.setVisible(true);
         });
 
         // Listener for Action > Dictionary
