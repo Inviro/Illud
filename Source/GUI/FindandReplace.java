@@ -37,14 +37,17 @@ public class FindandReplace extends JDialog{
 
         JOptionPane.showMessageDialog(this,
                 "Are you sure you want to " +
-                        "replace \"" + a + "\" with \"" + b + "\" " +
-                        "? \nPlease click ok.");
+                        "replace \"" + a + "\" with \"" + b + "\"" +
+                        "? \nPress ok to continue.");
 
-        // Checks if word boundary checking is required
-        if(simpleReplace.isSelected()){ // Boundary checking is required
-            area.setText(c.replaceAll(a, b)); // Simple replace
-        } else{
-            area.setText(c.replaceAll(a1, b)); // Replaces all exact word matches
+        // Makes sure that there is something to replace
+        if(!a.isEmpty()){
+            // Checks if word boundary checking is required
+            if(simpleReplace.isSelected()){         // Boundary checking is required
+                area.setText(c.replaceAll(a, b));   // Replaces all exact word matches
+            } else{                                 // Boundary checking not required
+                area.setText(c.replaceAll(a1, b));  // Simple replace
+            }
         }
     }
 }

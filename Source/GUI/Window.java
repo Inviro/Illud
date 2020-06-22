@@ -37,7 +37,7 @@ public class Window extends JFrame {
     private float volume;                                       // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
-    public enum Voice{
+    private enum Voice{
         poppy("dfki-poppy-hsmm"),
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
@@ -207,11 +207,12 @@ public class Window extends JFrame {
 
     private void updateCounters(JTextArea jTextArea, JList jList){
         Vector<String> result = new Vector<>();
-        result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
-        result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
-        result.add(CounterUtil.lineCounter(jTextArea) + " lines\n");
-        result.add(CounterUtil.paragraphCounter(jTextArea) + " paragraphs\n");
-        result.add(CounterUtil.sentenceCounter(jTextArea) + " sentences\n");
+        String currentText = jTextArea.getText();
+        result.add(CounterUtil.characterCounter(currentText) + " characters\n");
+        result.add(CounterUtil.wordCounter(currentText) + " words\n");
+        result.add(CounterUtil.lineCounter(currentText) + " lines\n");
+        result.add(CounterUtil.paragraphCounter(currentText) + " paragraphs\n");
+        result.add(CounterUtil.sentenceCounter(currentText) + " sentences\n");
         jList.setListData(result);
     }
 }

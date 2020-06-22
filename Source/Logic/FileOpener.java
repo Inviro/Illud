@@ -1,18 +1,16 @@
 package Source.Logic;
 
 import Source.GUI.UserInput;
-
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Vector;
 
 public class FileOpener {
     // Class Variables
-    private Scanner scanner;                    // Scanner for
-    private JFileChooser fc;                    // File Chooser
+    private Scanner scanner;                                                // Scanner for getting input
+    private JFileChooser fc;                                                // File Chooser
     private Vector<String> acceptedFileTypes;
 
     // Default Constructor
@@ -61,10 +59,8 @@ public class FileOpener {
 
             // Reading file into a string
             try {
-                scanner = new Scanner(file, "utf-8");
-            } catch (FileNotFoundException fileNotFoundException) {
-                fileNotFoundException.printStackTrace();
-            }
+                scanner = new Scanner(file);
+            } catch (Exception e) { e.printStackTrace(); }
             if(scanner.hasNext()){
                 String fileText = scanner
                         .useDelimiter("\\A")                        // Delimiter - End of Line
