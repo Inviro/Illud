@@ -143,7 +143,7 @@ public class Window extends Component {
         find.setSize(500, 150);                      // Setting Dialog Size
 
         dictionary = new Dictionary();                           // Creating Dictionary Dialog
-        dictionary.setSize(500, 150);                // Setting Dialog Size
+        dictionary.setSize(500, 400);                // Setting Dialog Size
 
         // Creating File Chooser
         fc = new JFileChooser();                                 // New file chooser object
