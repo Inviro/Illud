@@ -6,6 +6,7 @@ import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
+import java.awt.*;
 import java.awt.event.ActionEvent;                              // Used to handle events
 import java.awt.event.ActionListener;                           // Adds a listener to events
 import java.util.Vector;                                        // Used for JList
@@ -16,7 +17,8 @@ public class Window {
     private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
-    Find find; ///
+    Find find;///
+    FindandReplace findReplace;                                 // Declares FindandReplace variable
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -118,6 +120,8 @@ public class Window {
 
         // Creating Find Dialog
         find = new Find();
+        //Creating FindandReplace Dialog
+        findReplace = new FindandReplace();
     }
 
     // Makes listeners for UserInput
@@ -125,7 +129,23 @@ public class Window {
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
         JButton jButton = userInput.getPressMeButton();
+        // User Input gets FindandReplace button
+        JButton findAndReplace = userInput.getFindAndReplace();
 
+        findAndReplace.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame frame = new JFrame(("FindandReplace"));
+                frame.setContentPane(findReplace.getFindAndReplace(jTextArea));
+                //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                //String f = findReplaceArea.getText();
+                //userInput.setMainTextArea(copyOfData);
+                frame.pack();
+                frame.setVisible(true);
+
+
+            }
+        });
         // Creates action listener for jButton
         jButton.addActionListener(new ActionListener() {
             @Override
