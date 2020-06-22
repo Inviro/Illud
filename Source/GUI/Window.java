@@ -1,14 +1,12 @@
 package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
+import Source.Logic.FileOpener;
+
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
-import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;                               // Used to listen for text change
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.Vector;                                        // Used for JList
 
 public class Window extends JFrame {
@@ -21,6 +19,7 @@ public class Window extends JFrame {
     private FindandReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
+    private FileOpener fileOpener;                              // Opens files
 
     // JMenuItems to add listeners to in the menu
     private JMenuItem open_menu_item;
@@ -29,9 +28,6 @@ public class Window extends JFrame {
     private JMenuItem find_replace_menu_item;
     private JMenuItem tts_menu_item;
     private JMenuItem about_menu_item;
-
-    private JFileChooser fc;                                    // File chooser
-    private Vector<String> acceptedTypes;
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -143,39 +139,7 @@ public class Window extends JFrame {
         about = new About();                                                // Creating About Dialog
         about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
 
-        // Creating File Chooser
-        fc = new JFileChooser();                                            // New file chooser object
-
-        // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
-
-        acceptedTypes = new Vector<>();                                     // Holds accepted file types
-        acceptedTypes.add("txt");                                           // Text files
-        fc.setFileFilter(new FileFilter() {                                 // Creates a new filter
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()){                                       // Allows folders to be selected
-                    return true;
-                } else{
-                    String filename = f.getName().toLowerCase();
-                    for(String ele: acceptedTypes){                         // For each accepted file type
-                        if (filename.endsWith(ele)){                        // Returns true if suffix type is accepted
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-            @Override
-            public String getDescription() {
-                // Creating accepted file type descriptions
-                String temp = "Text Files ";
-                for(String ele: acceptedTypes) {                            // For each accepted file type
-                    temp += "(*." + ele + ") ";
-                }
-                return temp;
-            }
-        });
+        fileOpener = new FileOpener();                                      // Creating file handler object
     }
 
     // Makes listeners for UserInput
@@ -205,25 +169,7 @@ public class Window extends JFrame {
 
         // Listener for File > Open
         open_menu_item.addActionListener(e -> {
-            // Opens the dialog for the file chooser
-            int returnVal = fc.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-
-                // Reading file into a string
-                Scanner scanner = null;
-                try {
-                    scanner = new Scanner(file, "utf-8");
-                } catch (FileNotFoundException fileNotFoundException) {
-                    fileNotFoundException.printStackTrace();
-                }
-                String fileText = scanner
-                        .useDelimiter("\\A")                        // Delimiter - End of Line
-                        .next()                                     // Next input
-                        .replace("\r", "");         // Removes extra CR
-                scanner.close();
-                userInput.setFile(fileText); // Puts string from file into main text area
-            }
+            fileOpener.activate(this, userInput);
         });
 
         // Listener for Action > Find
