@@ -32,6 +32,7 @@ public class Window extends JFrame {
 
     private JFileChooser fc;                                    // File chooser
     private Vector<String> acceptedTypes;
+    static private final String newline = "\n";
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -115,6 +116,30 @@ public class Window extends JFrame {
         tts_menu_item = new JMenuItem("Text To Speech");            // "Actions" > "Text to Speech"
         JMenu help = new JMenu("Help");                               // "Help"
         about_menu_item = new JMenuItem("About");                   // "Help" > About"
+
+        // Listener for File > Open
+        open_menu_item.addActionListener(e -> {
+            fc = new JFileChooser(); // New file chooser object
+
+            // Opens the dialog for the file chooser
+            int returnVal = fc.showOpenDialog(Window.this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file1 = fc.getSelectedFile();
+                System.out.println("Opening: " + file1.getName() + "." + newline);
+
+                // Reading file into a string
+                Scanner scanner = null;
+                try {
+                    scanner = new Scanner(file1);
+                } catch (FileNotFoundException fileNotFoundException) {
+                    fileNotFoundException.printStackTrace();
+                }
+                String fileText = scanner.useDelimiter("\\A").next();
+                scanner.close();
+
+                userInput.setFile(fileText); // Puts string from file into main text area
+            }
+        });
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
