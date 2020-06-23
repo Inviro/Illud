@@ -16,16 +16,18 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
 public class Dictionary extends JDialog {
+    // JavaSwing Variables
     private JPanel contentPane;
     private JButton buttonDefine;
     private JButton buttonCancel;
     private JTextField wordInputTextField;
-    private JTextArea definitionTextArea;
+    private JTextArea definitionJTextArea;
 
     public Dictionary() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonDefine);
+
 
         buttonDefine.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -36,7 +38,6 @@ public class Dictionary extends JDialog {
 
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 onCancel();
             }
         });
@@ -45,7 +46,6 @@ public class Dictionary extends JDialog {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-
                 onCancel();
             }
         });
@@ -53,30 +53,35 @@ public class Dictionary extends JDialog {
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    // onDefine Function
+    // Will initiate reading online JSON File and output to the JTextArea
     private void onDefine() {
-        // add your code here
-        readJSON();
+        definitionJTextArea.setText(null); //Clear Jtextarea for new output
+        readJSON(); //retrieve definition
     }
 
+    // Will Close Window when initiated
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 
     // Read JSON File from "https://api.dictionaryapi.dev/api/v2/entries/en/insertWordHere"
     public void readJSON(){
 
+        // Get input from textfield
+        String input = wordInputTextField.getText();
+        System.out.println("User typed " + input);
+
+        // Getting information from online JSON File
         try {
             JSONParser jsonParser = new JSONParser(); //creating new JSON parser
 
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/hello"); //Creates URL Object
-            // FileReader reader = new FileReader(".\\Resources\\hello.json");    //this is a test to read local JSON File
+            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
             BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
             Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
@@ -86,26 +91,24 @@ public class Dictionary extends JDialog {
 
             // getting information from JSON Object
             String word = (String) dictJSON.get("word"); //getting word
-            System.out.println("word: " + word);
+            definitionJTextArea.append("Word: " + word + "\n\n");
 
             // getting info from meanings array
             JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
             for (int i=0; i<meaningArray.size(); i++){
-                System.out.println("Definition " + (i+1));
 
                 JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
 
                 String type = (String) temp.get("partOfSpeech");  //type of speech
-                System.out.println("Type of word: " + type);
 
                 // making definition array into JSON Object
                 JSONArray defArray = (JSONArray) temp.get("definitions");
+                String definition = null;
                 for (int j=0; j<defArray.size(); j++){
                     JSONObject defJSON = (JSONObject) defArray.get(j);
-                    String definition = (String) defJSON.get("definition");
-                    System.out.println("Definition: " + definition);
+                    definition = (String) defJSON.get("definition");
                 }
-                System.out.println("");
+                printDef((i+1), type, definition);
 
             }
 
@@ -113,17 +116,23 @@ public class Dictionary extends JDialog {
         }
         //Exceptions
         catch (MalformedURLException e){
-            System.out.println("Malformed URL: " + e.getMessage());
+            System.out.println("Malformed URL: " + e.getMessage() + "\n");
         }
         catch(FileNotFoundException e){
-            System.out.println("File Error: " + e.getMessage());
+            System.out.println("File Error: " + e.getMessage() + "\n");
         }
         catch (ParseException e){
-            System.out.println("Parse Error :" + e.getMessage());
+            System.out.println("Parse Error :" + e.getMessage() + "\n");
         }
         catch (IOException e){
-            System.out.println("I/O Error: " + e.getMessage());
+            System.out.println("I/O Error: " + e.getMessage() + "\n");
         }
+    }
+
+    // Print method
+    // Will output to JTextArea
+    public void printDef(int num, String type, String def){
+        definitionJTextArea.append("Definition " + num + "\nType: " + type + "\nDefinition: " + def +"\n\n");
     }
 
     public static void main(String[] args) {
