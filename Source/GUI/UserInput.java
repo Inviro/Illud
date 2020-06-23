@@ -9,6 +9,7 @@ public class UserInput {
     private JList jList;
     private JPanel jPanel;
     private JScrollPane scrollPane;
+    private JButton findAndReplace; // Button added to main GUI
 
     // Getters
     public JPanel getMainPanel() { return MainPanel; }
