@@ -75,7 +75,6 @@ public class Dictionary extends JDialog {
 
         // Get input from textfield
         String input = wordInputTextField.getText();
-        System.out.println("User typed " + input);
 
         // Getting information from online JSON File
         try {
@@ -117,9 +116,11 @@ public class Dictionary extends JDialog {
         //Exceptions
         catch (MalformedURLException e){
             System.out.println("Malformed URL: " + e.getMessage() + "\n");
+            definitionJTextArea.append("ERROR: Word not Found, please enter valid input..");
         }
         catch(FileNotFoundException e){
             System.out.println("File Error: " + e.getMessage() + "\n");
+            definitionJTextArea.append("ERROR: Word not Found, please enter valid input..");
         }
         catch (ParseException e){
             System.out.println("Parse Error :" + e.getMessage() + "\n");
