@@ -7,7 +7,6 @@ import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
 import javax.swing.text.Document;                               // Used to listen for text change
-import java.util.Vector;                                        // Used for JList
 
 public class Window extends JFrame {
     // Window Variables
@@ -108,7 +107,7 @@ public class Window extends JFrame {
         dict_menu_item = new JMenuItem("Dictionary");               // "Actions" > "Dictionary"
         find_menu_item = new JMenuItem("Find");                     // "Actions" > "Find"
         find_replace_menu_item = new JMenuItem("Find and Replace"); // "Actions" > "Find and Replace"
-        tts_menu_item = new JMenuItem("Text To Speech");            // "Actions" > "Text to Speech"
+        tts_menu_item = new JMenuItem("Read Highlighted Text");     // "Actions" > "Read Highlighted Text"
         JMenu help = new JMenu("Help");                               // "Help"
         about_menu_item = new JMenuItem("About");                   // "Help" > About"
 

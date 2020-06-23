@@ -8,7 +8,7 @@ public class FindAndReplace extends JDialog{
     private JButton buttonFind;
     private JTextField t1;
     private JTextField t2;
-    private JCheckBox simpleReplace;
+    private JCheckBox replaceOption;
     private JTextArea area;
 
     public FindAndReplace(JTextArea area) {
@@ -43,7 +43,7 @@ public class FindAndReplace extends JDialog{
         // Makes sure that there is something to replace
         if(!a.isEmpty()){
             // Checks if word boundary checking is required
-            if(simpleReplace.isSelected()){         // Boundary checking is required
+            if(!replaceOption.isSelected()){        // Boundary checking is required
                 area.setText(c.replaceAll(a, b));   // Replaces all exact word matches
             } else{                                 // Boundary checking not required
                 area.setText(c.replaceAll(a1, b));  // Simple replace
