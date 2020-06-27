@@ -44,6 +44,10 @@ public class Dictionary extends JDialog {
         contentPane.registerKeyboardAction(e -> onCancel(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+        this.setSize(600, 320);                     // Setting Dialog Size
+        this.setLocationRelativeTo(null);                       // Centers Dialog
+        this.setTitle("Dictionary");                            // Sets Dialog Title
     }
 
     // onDefine Function
@@ -93,28 +97,27 @@ public class Dictionary extends JDialog {
                     JSONObject defJSON = (JSONObject) defArray.get(j);
                     definition = (String) defJSON.get("definition");
                 }
-                printDef((i+1), type, definition);
+                displayDef((i+1), type, definition);
             }
         }
 
         //Exceptions
         catch (MalformedURLException e){
-            System.out.println("Malformed URL: " + e.getMessage() + "\n");
+            JOptionPane.showMessageDialog(this, "Malformed URL: "  + e.getMessage() + "\n");
         }
         catch(FileNotFoundException e){
-            System.out.println("File Error: " + e.getMessage() + "\n");
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage() + "\n");
         }
         catch (ParseException e){
-            System.out.println("Parse Error :" + e.getMessage() + "\n");
+            JOptionPane.showMessageDialog(this, "Parse Error :" + e.getMessage() + "\n");
         }
         catch (IOException e){
-            System.out.println("I/O Error: " + e.getMessage() + "\n");
+            JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
         }
     }
 
-    // Print method
-    // Will output to JTextArea
-    public void printDef(int num, String type, String def){
+    // Outputs definition to JtextArea
+    public void displayDef(int num, String type, String def){
         definitionJTextArea.append("Definition " + num + "\nType: " + type + "\nDefinition: " + def +"\n\n");
     }
 }

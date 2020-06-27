@@ -125,15 +125,14 @@ public class Window extends JFrame {
         makeListeners();                                                    // Creates action listeners
 
         find = new Find();                                                  // Creating Find Dialog
-        find.setSize(500, 150);                                             // Setting Dialog Size
+        find.setSize(500, 150);                                 // Setting Dialog Size
         find.setLocationRelativeTo(null);                                   // Centers Dialog
 
         findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
         findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
-        dictionary.setSize(500, 400);                                       // Setting Dialog Size
-        dictionary.setLocationRelativeTo(null);                             // Centers Dialog
+        dictionary.setIconImage(illudIcon.getImage());                      // Sets Icon to Illud Icon
 
         about = new About();                                                // Creating About Dialog
         about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
