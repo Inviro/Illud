@@ -63,61 +63,77 @@ public class Dictionary extends JDialog {
     }
 
     // Read JSON File from "https://api.dictionaryapi.dev/api/v2/entries/en/insertWordHere"
-    public void readJSON(){
+    private void readJSON(){
         // Get input from text field
         String input = wordInputTextField.getText();
 
-        // Getting information from online JSON File
-        try {
-            jsonParser = new JSONParser(); //creating new JSON parser
+        // Regular expression that I made to find the first word of almost any string. - Abraham
+        // Works for words with single contractions.
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^.*?([a-zA-Z']+'?[a-zA-Z']*)");
+        java.util.regex.Matcher matcher = pattern.matcher(input);
+        if(matcher.find()){
+            input = matcher.group(1); // First matched input
+            this.wordInputTextField.setText(input);
 
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
-            BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
+            // Getting information from online JSON File
+            try {
+                jsonParser = new JSONParser(); //creating new JSON parser
 
-            Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
+                URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
+                BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
-            JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
-            JSONObject dictJSON = (JSONObject) array.get(0); //Making array into object. defJSON should contain all objects from the web page
+                Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
 
-            // getting information from JSON Object
-            String word = (String) dictJSON.get("word"); //getting word
-            definitionJTextArea.append("Word: " + word + "\n\n");
+                JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
+                JSONObject dictJSON = (JSONObject) array.get(0); //Making array into object. defJSON should contain all objects from the web page
 
-            // getting info from meanings array
-            JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
-            for (int i=0; i<meaningArray.size(); i++){
+                // getting information from JSON Object
+                String word = (String) dictJSON.get("word"); //getting word
+                definitionJTextArea.append("Word: " + word + "\n\n");
 
-                JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
-                String type = (String) temp.get("partOfSpeech");  //type of speech
+                // getting info from meanings array
+                JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
+                for (int i=0; i<meaningArray.size(); i++){
 
-                // making definition array into JSON Object
-                JSONArray defArray = (JSONArray) temp.get("definitions");
-                String definition = null;
-                for (int j=0; j<defArray.size(); j++){
-                    JSONObject defJSON = (JSONObject) defArray.get(j);
-                    definition = (String) defJSON.get("definition");
+                    JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
+                    String type = (String) temp.get("partOfSpeech");  //type of speech
+
+                    // making definition array into JSON Object
+                    JSONArray defArray = (JSONArray) temp.get("definitions");
+                    String definition = null;
+                    for (int j=0; j<defArray.size(); j++){
+                        JSONObject defJSON = (JSONObject) defArray.get(j);
+                        definition = (String) defJSON.get("definition");
+                    }
+                    displayDef((i+1), type, definition);
                 }
-                displayDef((i+1), type, definition);
             }
-        }
-
-        //Exceptions
-        catch (MalformedURLException e){
-            JOptionPane.showMessageDialog(this, "Malformed URL: "  + e.getMessage() + "\n");
-        }
-        catch(FileNotFoundException e){
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage() + "\n");
-        }
-        catch (ParseException e){
-            JOptionPane.showMessageDialog(this, "Parse Error :" + e.getMessage() + "\n");
-        }
-        catch (IOException e){
-            JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
+            //Exceptions
+            catch (MalformedURLException e){
+                JOptionPane.showMessageDialog(this, "Malformed URL: "  + e.getMessage() + "\n");
+            }
+            catch(FileNotFoundException e){
+                JOptionPane.showMessageDialog(this,
+                        "No definitions found for: " + wordInputTextField.getText() + "\n");
+            }
+            catch (ParseException e){
+                JOptionPane.showMessageDialog(this, "Parse Error :" + e.getMessage() + "\n");
+            }
+            catch (IOException e){
+                JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
+            }
         }
     }
 
-    // Outputs definition to JtextArea
-    public void displayDef(int num, String type, String def){
+    // Outputs definition to text area
+    private void displayDef(int num, String type, String def){
         definitionJTextArea.append("Definition " + num + "\nType: " + type + "\nDefinition: " + def +"\n\n");
+    }
+
+    // Sets word input and searches
+    public void setAndSearch(String query){
+        this.wordInputTextField.setText(query);
+        this.onDefine();
+        this.setVisible(true);
     }
 }

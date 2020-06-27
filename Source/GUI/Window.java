@@ -144,11 +144,10 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-
         JList list = userInput.getJList();
-        Document doc = jTextArea.getDocument();
+
         // Listener for Document
-        doc.addDocumentListener(new DocumentListener() {
+        jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 updateCounters(jTextArea, list);
@@ -182,10 +181,17 @@ public class Window extends JFrame {
 
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
-            dictionary.setVisible(true);
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            if(text != null && text != ""){ // Highlighted Text
+                dictionary.setAndSearch(text);
+            } else{
+                dictionary.setVisible(true);
+            }
         });
 
-        // Listener for Action > Dictionary
+        // Listener for Action > About
         about_menu_item.addActionListener(e -> {
             about.setVisible(true);
         });
