@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
-import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -18,9 +17,10 @@ public class Find extends JDialog {
     private JPanel instanceSearch;
     private JTextArea area;
 
-    private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.YELLOW);
-    private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.ORANGE);
+    private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.ORANGE);
+    private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.YELLOW);
     private Highlighter.Highlight[] highlightArr;
+    private Highlighter high;
 
     public Find(JTextArea area) {
         this.area = area;
@@ -29,8 +29,8 @@ public class Find extends JDialog {
         getRootPane().setDefaultButton(buttonOK);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-        contentPane.registerKeyboardAction(e->dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent. WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.setSize(600, 200);
         this.setLocationRelativeTo(null);
         this.setTitle("Find");
@@ -38,18 +38,37 @@ public class Find extends JDialog {
         highlightArr = null;
         buttonOK.addActionListener(e -> find());
         buttonCancel.addActionListener(e -> onCancel());
+        prevButton.addActionListener(e -> onPrev());
+        nextButton.addActionListener(e -> onNext());
         instanceSearch.setVisible(false);
+        high = area.getHighlighter();
     }
 
     private void onCancel() {
         dispose();
     }
 
-    private void find(){
+    private void find() {
         String input = textField1.getText();
-        if(!input.isEmpty()){
-            highlight(area, input);
+        if (!input.isEmpty()) {
+            highlight(input);
         }
+    }
+
+    private void setHighlight(int index,  Highlighter.HighlightPainter p){
+        high.removeHighlight(highlightArr[index]);
+        try{
+            highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[0].getStartOffset(),
+                    highlightArr[index].getEndOffset(), p);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    // Previous instance of found string
+    private void onPrev() {
+    }
+
+    // Next instance of found string
+    private void onNext() {
     }
 
     private class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
@@ -58,22 +77,10 @@ public class Find extends JDialog {
         }
     }
 
-    private void removeHighlight(JTextComponent textComp) {
-        Highlighter high = textComp.getHighlighter();
-        if(highlightArr != null){
-            for(Highlighter.Highlight h: highlightArr){
-                if(h.getPainter() instanceof  highlighter){
-                    high.removeHighlight(h);
-                }
-            }
-        }
-    }
-
-    private void highlight(JTextComponent textComp, String pattern) {
-        removeHighlight(textComp);
+    private void highlight(String pattern) {
+        high.removeAllHighlights();
         try {
-            Highlighter high = textComp.getHighlighter();
-            Document doc = textComp.getDocument();
+            Document doc = area.getDocument();
             String text = doc.getText(0, doc.getLength());
             int pos = 0;
             while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) >= 0) {
@@ -86,12 +93,12 @@ public class Find extends JDialog {
         perInstance();
     }
 
-    private void perInstance(){
-        Highlighter high = area.getHighlighter();
+    private void perInstance() {
         highlightArr = high.getHighlights();
         instanceSearch.setVisible(highlightArr.length > 0);
     }
 }
+
 
 
 
