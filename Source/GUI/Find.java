@@ -8,36 +8,37 @@ import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
 
-
 public class Find extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JTextField textField1;
+    private JButton prevButton;
+    private JButton nextButton;
+    private JPanel instanceSearch;
     private JTextArea area;
 
+    private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.YELLOW);
+    private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.ORANGE);
+    private Highlighter.Highlight[] highlightArr;
 
     public Find(JTextArea area) {
-        this.area= area;
+        this.area = area;
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-        buttonOK.addActionListener(e -> find());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         contentPane.registerKeyboardAction(e->dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent. WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.setSize(600, 150);
+        this.setSize(600, 200);
         this.setLocationRelativeTo(null);
         this.setTitle("Find");
 
-
-        buttonCancel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        highlightArr = null;
+        buttonOK.addActionListener(e -> find());
+        buttonCancel.addActionListener(e -> onCancel());
+        instanceSearch.setVisible(false);
     }
 
     private void onCancel() {
@@ -45,55 +46,52 @@ public class Find extends JDialog {
     }
 
     private void find(){
-        String a= textField1.getText();
-        String c= area.getText();
-        highlight(area, textField1.getText());
+        String input = textField1.getText();
+        if(!input.isEmpty()){
+            highlight(area, input);
         }
+    }
 
-
-
-    class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
+    private class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
         public highlighter(Color color) {
             super(color);
         }
     }
 
-    Highlighter.HighlightPainter highlighter = new highlighter(Color.yellow);
-
-    public void removeHighlight(JTextComponent textComp) {
+    private void removeHighlight(JTextComponent textComp) {
         Highlighter high = textComp.getHighlighter();
-        Highlighter.Highlight[] oldHighlighted = high.getHighlights();
-        for (int i = 0; i < oldHighlighted.length; i++) {
-            if (oldHighlighted[i].getPainter() instanceof highlighter) {
-                high.removeHighlight(oldHighlighted[i]);
+        if(highlightArr != null){
+            for(Highlighter.Highlight h: highlightArr){
+                if(h.getPainter() instanceof  highlighter){
+                    high.removeHighlight(h);
+                }
             }
         }
     }
 
-
-    public void highlight(JTextComponent textComp, String pattern) {
+    private void highlight(JTextComponent textComp, String pattern) {
         removeHighlight(textComp);
         try {
             Highlighter high = textComp.getHighlighter();
             Document doc = textComp.getDocument();
             String text = doc.getText(0, doc.getLength());
             int pos = 0;
-
             while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) >= 0) {
-                high.addHighlight(pos, pos + pattern.length(), highlighter);
+                high.addHighlight(pos, pos + pattern.length(), allResultsHighlight);
                 pos += pattern.length();
-
             }
-
-
         } catch (Exception e) {
+            e.printStackTrace();
         }
+        perInstance();
     }
 
-
-
-
+    private void perInstance(){
+        Highlighter high = area.getHighlighter();
+        highlightArr = high.getHighlights();
+        instanceSearch.setVisible(highlightArr.length > 0);
     }
+}
 
 
 

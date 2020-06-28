@@ -124,9 +124,8 @@ public class Window extends JFrame {
         this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
         makeListeners();                                                    // Creates action listeners
 
-        find = new Find(userInput.getMainTextArea());                                                  // Creating Find Dialog
-        find.setSize(500, 150);                                 // Setting Dialog Size
-        find.setLocationRelativeTo(null);                                   // Centers Dialog
+        find = new Find(userInput.getMainTextArea());                       // Creating Find Dialog
+        find.setIconImage(illudIcon.getImage());                            // Sets Icon to Illud Icon
 
         findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
         findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
