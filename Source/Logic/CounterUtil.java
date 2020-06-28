@@ -1,29 +1,41 @@
 package Source.Logic;
 
-import javax.swing.JTextArea;
+import java.util.Vector;
 
 public class CounterUtil{
-    public static int characterCounter(JTextArea input){
-        return input.getText().length(); // Number of characters in the input
+    private static int characterCounter(String input){
+        return input.length(); // Number of characters in the input
     }
 
-    public static int wordCounter(JTextArea input){
+    private static int wordCounter(String input){
         // Counts regex captures separated by whitespace
-        return input.getText().split("\\s+").length;
+        return input.split("\\s+").length;
     }
 
-    public static int lineCounter(JTextArea input){
+    private static int lineCounter(String input){
         // Counts regex captures separated by newline characters
-        return input.getText().split("\\n").length;
+        return input.split("\\n").length;
     }
 
-    public static int paragraphCounter(JTextArea input){
+    private static int paragraphCounter(String input){
         // Counts regex captures separated by line feed characters
-        return input.getText().split("\\R+").length;
+        return input.split("\\R+").length;
     }
 
-    public static int sentenceCounter(JTextArea input) {
+    private static int sentenceCounter(String input) {
         // Counts regex captures separated by a period followed by a space
-        return input.getText().split("[!?.:]+").length;
+        return input.split("[!?.:]+").length;
+    }
+
+    public static Vector<String> getCounterData(String input){
+        Vector<String> output = new Vector<>();                 // Stores output
+
+        // Adds each stat to the output
+        output.add(characterCounter(input) + " characters\n");
+        output.add(wordCounter(input) + " words\n");
+        output.add(lineCounter(input) + " lines\n");
+        output.add(paragraphCounter(input) + " paragraphs\n");
+        output.add(sentenceCounter(input) + " sentences\n");
+        return output;                                          // Returns output
     }
 }

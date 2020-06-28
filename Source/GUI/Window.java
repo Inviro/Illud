@@ -1,37 +1,32 @@
 package Source.GUI;
 import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
+import Source.Logic.FileOpener;
+
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
-import javax.swing.filechooser.FileFilter;
 import javax.swing.text.Document;                               // Used to listen for text change
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import java.util.Vector;                                        // Used for JList
 
-public class Window extends Component {
+public class Window extends JFrame {
     // Window Variables
-    private JFrame jFrame;                                      // Main JFrame where everything is put on top of
-    private int width, height;                                  // Window Dimensions
     private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
     private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
+    private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
-    Find find;                                                  // Find dialog
-    Dictionary dictionary;                                      // Dictionary dialog
+    private Find find;                                          // Find dialog
+    private FindAndReplace findandReplace;                      // Find and Replace dialog
+    private Dictionary dictionary;                              // Dictionary dialog
+    private About about;                                        // About dialog
+    private FileOpener fileOpener;                              // Opens files
 
     // JMenuItems to add listeners to in the menu
-    JMenuItem open_menu_item;
-    JMenuItem dict_menu_item;
-    JMenuItem find_menu_item;
-    JMenuItem tts_menu_item;
-    JMenuItem about_menu_item;
-
-    private JFileChooser fc;                                    // File chooser
-    //private FileEx fileEx;//me
-    private Vector<String> acceptedTypes;
+    private JMenuItem open_menu_item;
+    private JMenuItem dict_menu_item;
+    private JMenuItem find_menu_item;
+    private JMenuItem find_replace_menu_item;
+    private JMenuItem tts_menu_item;
+    private JMenuItem about_menu_item;
 
     // UserInput variables
     private UserInput userInput;                                // Form for user input
@@ -41,7 +36,7 @@ public class Window extends Component {
     private float volume;                                       // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
-    public enum Voice{
+    private enum Voice{
         poppy("dfki-poppy-hsmm"),
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
@@ -72,20 +67,9 @@ public class Window extends Component {
         // Initializing text to speech
         tts = new TextToSpeech();                               // Creates new Text to Speech Object
         tts.setVoice(Voice.poppy.voiceString);                  // Sets a voice to the text to speech object
-        volume = 1.0f;                                          // Sets volume to a default number
+        this.volume = 1.0f;                                     // Sets volume to a default number
         initUI();                                               // Initializes the User Interface
     }
-
-    // Setter for size
-    public void setSize(int width, int height){
-        jFrame.setSize(width, height);
-        this.width = width;
-        this.height = height;
-    }
-
-    // Getters
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
 
     // Misc Functions
     private void speak(String text) {tts.speak(text, volume, false, false);}    // Uses MaryTTS on the text
@@ -94,22 +78,22 @@ public class Window extends Component {
     // Initializing all of the UI elements in Window
     private void initUI() {
         // Initializing JFrame
-        jFrame = new JFrame(WIN_NAME);                          // Creates new JFrame to put JPanels on
+        this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
+
+        illudIcon = new ImageIcon(                              // New icon image composed of:
+                        getClass()                              // From the instance of current class:
+                        .getResource(ICON_PATH));               // Get the resource at ICON_PATH
 
         // Setting Icon image in the JFrame
-        jFrame.setIconImage(                                    // Sets icon image
-                new ImageIcon(                                  // To a new icon image composed of:
-                        getClass()                              // The current class:
-                                .getResource(ICON_PATH))                // Resource at ICON_PATH
-                        .getImage()                             // Image from resource
-        );
+        this.setIconImage(illudIcon.getImage());
 
         userInput = new UserInput();                            // Creates new instance of UserInput
-        jFrame.setContentPane(userInput.getMainPanel());        // Sets content pane to new instance of UserInput
-        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exits when X is clicked
-        jFrame.pack();                                          // Packs the elements on top of the JFrame
-        jFrame.setVisible(true);                                // Makes everything visible
+        this.setContentPane(userInput.getMainPanel());          // Sets content pane to new instance of UserInput
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);    // Exits when X is clicked
+        this.pack();                                            // Packs the elements on top of the JFrame
         this.setSize(500, 400);                     // Sets size to a default amount
+        this.setLocationRelativeTo(null);                       // Centers Window
+        this.setVisible(true);                                  // Makes everything visible
 
         // Creating jMenuBar, jMenus and jMenuItems
         // jMenuBar > jMenu > jMenuItem
@@ -117,92 +101,52 @@ public class Window extends Component {
         // A jMenu for example would be "File" or something you would see inside the bar
         // A jMenuItem or jMenu would show up once you click the jMenu in the jMenuBar
         JMenuBar jMenuBar = new JMenuBar();
-        JMenu file = new JMenu("File");                       // "File"
-        open_menu_item = new JMenuItem("Open");             // "File > Open"
-        JMenu actions = new JMenu("Actions");                 // "Actions"
-        dict_menu_item = new JMenuItem("Dictionary");       // "Actions" > "Dictionary"
-        find_menu_item = new JMenuItem("Find");             // "Actions" > "Find"
-        tts_menu_item = new JMenuItem("Text To Speech");    // "Actions" > "Text to Speech"
-        JMenu settings = new JMenu("Settings");               // "Settings"
-        about_menu_item = new JMenuItem("About");           // "Settings" > About"
+        JMenu file = new JMenu("File");                               // "File"
+        open_menu_item = new JMenuItem("Open");                     // "File > Open"
+        JMenu actions = new JMenu("Actions");                         // "Actions"
+        dict_menu_item = new JMenuItem("Dictionary");               // "Actions" > "Dictionary"
+        find_menu_item = new JMenuItem("Find");                     // "Actions" > "Find"
+        find_replace_menu_item = new JMenuItem("Find and Replace"); // "Actions" > "Find and Replace"
+        tts_menu_item = new JMenuItem("Read Highlighted Text");     // "Actions" > "Read Highlighted Text"
+        JMenu help = new JMenu("Help");                               // "Help"
+        about_menu_item = new JMenuItem("About");                   // "Help" > About"
 
         // Creating the menu bar from the above elements
         jMenuBar.add(file);
         jMenuBar.add(actions);
-        jMenuBar.add(settings);
+        jMenuBar.add(help);
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
+        actions.add(find_replace_menu_item);
         actions.add(tts_menu_item);
-        settings.add(about_menu_item);
-        jFrame.setJMenuBar(jMenuBar);                            // Sets the menu bar
-        makeListeners();                                         // Creates action listeners
+        help.add(about_menu_item);
+        this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
+        makeListeners();                                                    // Creates action listeners
 
+        find = new Find(userInput.getMainTextArea());                       // Creating Find Dialog
+        find.setIconImage(illudIcon.getImage());                            // Sets Icon to Illud Icon
 
-        find = new Find();                                       // Creating Find Dialog
-        find.setSize(500, 150);                      // Setting Dialog Size
+        findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
+        findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
-        dictionary = new Dictionary();                           // Creating Dictionary Dialog
-        dictionary.setSize(500, 400);                // Setting Dialog Size
+        dictionary = new Dictionary();                                      // Creating Dictionary Dialog
+        dictionary.setIconImage(illudIcon.getImage());                      // Sets Icon to Illud Icon
 
-        // Creating File Chooser
-        fc = new JFileChooser();                                 // New file chooser object
+        about = new About();                                                // Creating About Dialog
+        about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
 
-        // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                    // Does not accept all file types
-        acceptedTypes = new Vector<>();                          // Holds accepted file types
-        acceptedTypes.add("txt");                                // Text files
-        fc.setFileFilter(new FileFilter() {                      // Creates a new filter
-            @Override
-            public boolean accept(File f) {
-                if (f.isDirectory()){                            // Allows folders to be selected
-                    return true;
-                } else{
-                    String filename = f.getName().toLowerCase();
-                    for(String ele: acceptedTypes){              // For each accepted file type
-                        if (filename.endsWith(ele)){             // Returns true if suffix is accepted file type
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-            }
-            @Override
-            public String getDescription() {
-                // Creating accepted file type descriptions
-                String temp = "Text Files ";
-                for(String ele: acceptedTypes) {              // For each accepted file type
-                    temp += "(*." + ele + ") ";
-                }
-                return temp;
-            }
-        });
+        fileOpener = new FileOpener();                                      // Creating file handler object
     }
 
     // Makes listeners for UserInput
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-        JButton jButton = userInput.getPressMeButton();
-
-        // Creates action listener for jButton
-        jButton.addActionListener(e -> { // Runs on button click
-            // Gets Text from jTextArea
-            String text = jTextArea.getText();
-
-            // Uses TTS on the text
-            if(!text.equals("")){ // Makes sure that there is text to be read
-                speak(text);
-            }
-
-            // Displays the text
-            JOptionPane.showMessageDialog(jFrame, text);
-        });
-
         JList list = userInput.getJList();
-        Document doc = jTextArea.getDocument();
+
         // Listener for Document
-        doc.addDocumentListener(new DocumentListener() {
+        jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 updateCounters(jTextArea, list);
@@ -221,24 +165,7 @@ public class Window extends Component {
 
         // Listener for File > Open
         open_menu_item.addActionListener(e -> {
-            // Opens the dialog for the file chooser
-            int returnVal = fc.showOpenDialog(Window.this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                System.out.println("Opening: " + file.getName() + ".\n");
-
-                // Reading file into a string
-                Scanner scanner = null;
-                try {
-                    scanner = new Scanner(file);
-                } catch (FileNotFoundException fileNotFoundException) {
-                    fileNotFoundException.printStackTrace();
-                }
-                String fileText = scanner.useDelimiter("\\A").next();
-                scanner.close();
-
-                userInput.setFile(fileText); // Puts string from file into main text area
-            }
+            fileOpener.activate(this, userInput);
         });
 
         // Listener for Action > Find
@@ -246,19 +173,43 @@ public class Window extends Component {
             find.setVisible(true);
         });
 
+        // Listener for Action > Find and Replace
+        find_replace_menu_item.addActionListener(e -> {
+            findandReplace.setVisible(true);
+        });
+
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
-            dictionary.setVisible(true);
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            if(text != null && text != ""){ // Highlighted Text
+                dictionary.setAndSearch(text);
+            } else{
+                dictionary.setVisible(true);
+            }
+        });
+
+        // Listener for Action > About
+        about_menu_item.addActionListener(e -> {
+            about.setVisible(true);
+        });
+
+        tts_menu_item.addActionListener(e -> {
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            // No text highlighted
+            if(text == null){           // If text is null end TTS playback
+                endSpeak();
+            } else if (text != ""){     // Checks if text is not empty
+                speak(text);            // Uses TTS on the text
+            }
         });
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
-        Vector<String> result = new Vector<>();
-        result.add(CounterUtil.characterCounter(jTextArea) + " characters\n");
-        result.add(CounterUtil.wordCounter(jTextArea) + " words\n");
-        result.add(CounterUtil.lineCounter(jTextArea) + " lines\n");
-        result.add(CounterUtil.paragraphCounter(jTextArea) + " paragraphs\n");
-        result.add(CounterUtil.sentenceCounter(jTextArea) + " sentences\n");
-        jList.setListData(result);
+        String currentText = jTextArea.getText();
+        jList.setListData(CounterUtil.getCounterData(currentText));
     }
 }
