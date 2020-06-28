@@ -21,6 +21,7 @@ public class Find extends JDialog {
     private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.YELLOW);
     private Highlighter.Highlight[] highlightArr;
     private Highlighter high;
+    private int index;
 
     public Find(JTextArea area) {
         this.area = area;
@@ -55,20 +56,34 @@ public class Find extends JDialog {
         }
     }
 
-    private void setHighlight(int index,  Highlighter.HighlightPainter p){
+    private void setHighlight(int index, Highlighter.HighlightPainter p){
         high.removeHighlight(highlightArr[index]);
         try{
-            highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[0].getStartOffset(),
+            highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[index].getStartOffset(),
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
+        String resultString = "Showing result " + (index + 1) + " of " + highlightArr.length + ".";
+        instanceSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
     }
 
     // Previous instance of found string
     private void onPrev() {
+        int newIdx = (index == 0) ? index : (index - 1);
+        if(newIdx != index){
+            setHighlight(index, allResultsHighlight);
+            index = newIdx;
+            setHighlight(newIdx, currResultHighlight);
+        }
     }
 
     // Next instance of found string
     private void onNext() {
+        int newIdx = (index == highlightArr.length - 1) ? index : (index + 1);
+        if(newIdx != index){
+            setHighlight(index, allResultsHighlight);
+            index = newIdx;
+            setHighlight(newIdx, currResultHighlight);
+        }
     }
 
     private class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
@@ -79,6 +94,7 @@ public class Find extends JDialog {
 
     private void highlight(String pattern) {
         high.removeAllHighlights();
+        index = 0;
         try {
             Document doc = area.getDocument();
             String text = doc.getText(0, doc.getLength());
@@ -90,12 +106,14 @@ public class Find extends JDialog {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        perInstance();
-    }
 
-    private void perInstance() {
         highlightArr = high.getHighlights();
-        instanceSearch.setVisible(highlightArr.length > 0);
+        if(highlightArr.length > 0){
+            setHighlight(index, currResultHighlight);
+            instanceSearch.setVisible(true);
+        } else{
+            instanceSearch.setVisible(false);
+        }
     }
 }
 
