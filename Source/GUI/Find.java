@@ -15,6 +15,7 @@ public class Find extends JDialog {
     private JButton prevButton;
     private JButton nextButton;
     private JPanel instanceSearch;
+    private JButton clearButton;
     private JTextArea area;
 
     private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.ORANGE);
@@ -41,6 +42,7 @@ public class Find extends JDialog {
         buttonCancel.addActionListener(e -> onCancel());
         prevButton.addActionListener(e -> onPrev());
         nextButton.addActionListener(e -> onNext());
+        clearButton.addActionListener(e -> onClear());
         instanceSearch.setVisible(false);
         high = area.getHighlighter();
     }
@@ -53,6 +55,8 @@ public class Find extends JDialog {
         String input = textField1.getText();
         if (!input.isEmpty()) {
             highlight(input);
+        } else {
+            instanceSearch.setVisible(false);
         }
     }
 
@@ -84,6 +88,13 @@ public class Find extends JDialog {
             index = newIdx;
             setHighlight(newIdx, currResultHighlight);
         }
+    }
+
+    // Next instance of found string
+    private void onClear() {
+        high.removeAllHighlights();
+        textField1.setText("");
+        instanceSearch.setVisible(false);
     }
 
     private class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
