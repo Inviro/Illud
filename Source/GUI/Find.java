@@ -20,6 +20,7 @@ public class Find extends JDialog {
     private JButton replaceButton;
     private JButton replaceAllButton;
     private JCheckBox smartReplaceCheckBox;
+    private JPanel replacePanel;
     private JTextArea area;
 
     // Highlighter components
@@ -79,7 +80,7 @@ public class Find extends JDialog {
         nextButton.addActionListener(e -> onNext());
         clearButton.addActionListener(e -> onClear());
 
-        instanceSearch.setVisible(false);   // Cannot access next and previous buttons initially
+        setPanelVis(false);                 // Cannot access some GUI elements initially
         high = area.getHighlighter();       // Class highlighter variable
         isHidden = false;                   // Is not in hidden state
     }
@@ -105,7 +106,6 @@ public class Find extends JDialog {
                     "Error: No input detected",
                     title,
                     JOptionPane.ERROR_MESSAGE);
-            instanceSearch.setVisible(false);
         }
     }
 
@@ -173,7 +173,7 @@ public class Find extends JDialog {
     private void onClear() {
         high.removeAllHighlights();
         queryField.setText("");
-        instanceSearch.setVisible(false);
+        setPanelVis(false);
     }
 
     private static class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
@@ -199,9 +199,9 @@ public class Find extends JDialog {
         highlightArr = high.getHighlights();            // Populates array of highlights
         if(highlightArr.length > 0){ // 1+ matches
             setHighlight(index, currResultHighlight);   // Highlights index 0
-            instanceSearch.setVisible(true);            // Enables prev and next buttons
+            setPanelVis(true);                          // Shows GUI elements
         } else{ // 0 matches
-            instanceSearch.setVisible(false);           // Disables prev and next buttons
+            setPanelVis(false);                         // Hides GUI elements
         }
     }
 
@@ -229,7 +229,7 @@ public class Find extends JDialog {
                     setHighlights(allResultsHighlight);                         // Sets all highlight color
                     setHighlight(index, currResultHighlight);                   // Sets current highlight color
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
-                    instanceSearch.setVisible(true);                            // Shows the next and prev buttons
+                    setPanelVis(true);                                          // Shows GUI elements
                 }
             }
         }
@@ -255,5 +255,11 @@ public class Find extends JDialog {
             }
         }
         return sum;
+    }
+
+    // Sets panel visibility for panels that only appear if there are search results
+    private void setPanelVis(boolean isVis){
+        this.instanceSearch.setVisible(isVis);
+        this.replacePanel.setVisible(isVis);
     }
 }
