@@ -51,6 +51,7 @@ public class Find extends JDialog {
                 tempText = queryField.getText();        // Saves query text
                 oldHash = area.getText().hashCode();    // Saves hash of current document
                 onClear();                              // Clears the window
+                highlightElement(highlightArr[index]);  // Highlights the search result
             }
 
             @Override
@@ -63,15 +64,16 @@ public class Find extends JDialog {
             }
         });
 
-        highlightArr = null;
+        // Adding listeners
         buttonOK.addActionListener(e -> find());
         buttonCancel.addActionListener(e -> onCancel());
         prevButton.addActionListener(e -> onPrev());
         nextButton.addActionListener(e -> onNext());
         clearButton.addActionListener(e -> onClear());
-        instanceSearch.setVisible(false);
-        high = area.getHighlighter();
-        isHidden = false;
+
+        instanceSearch.setVisible(false);   // Cannot access next and previous buttons initially
+        high = area.getHighlighter();       // Class highlighter variable
+        isHidden = false;                   // Is not in hidden state
     }
 
     private void onCancel() {
@@ -123,17 +125,19 @@ public class Find extends JDialog {
 
     // Previous instance of found string
     private void onPrev() {
+        // Determines new index based on old index and looping
         int newIdx = (index == 0) ? highlightArr.length - 1 : (index - 1);
-        changeInstance(newIdx, index);
+        changeInstance(index, newIdx);
     }
 
     // Next instance of found string
     private void onNext() {
+        // Determines new index based on old index and looping
         int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
-        changeInstance(newIdx, index);
+        changeInstance(index, newIdx);
     }
 
-    private void changeInstance(int newIndex, int oldIndex){
+    private void changeInstance(int oldIndex, int newIndex){
         // If tempText did not change
         if(tempText.equals(queryField.getText())){ // No change
             if(newIndex != oldIndex){ // Only runs if new and old indexes differ
@@ -222,9 +226,14 @@ public class Find extends JDialog {
             }
         }
     }
+
+    private void highlightElement(Highlighter.Highlight h){
+        int pos = h.getEndOffset();
+        try{
+            java.awt.Rectangle view = area.modelToView(pos);                // Gets view rectangle where pos is visible
+            area.scrollRectToVisible(view);                                 // Scroll to the rectangle
+            area.setCaretPosition(pos);                                     // Sets carat position to pos
+            area.moveCaretPosition(h.getStartOffset());                     // Highlights text
+        } catch (Exception e) {e.printStackTrace();}
+    }
 }
-
-
-
-
-
