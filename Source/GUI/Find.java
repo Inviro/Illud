@@ -114,11 +114,16 @@ public class Find extends JDialog {
     }
 
     private void changeInstance(int newIndex, int oldIndex){
-        if(newIndex != oldIndex){
-            setHighlight(index, allResultsHighlight);
-            index = newIndex;
-            setHighlight(newIndex, currResultHighlight);
-            scrollToQuery(highlightArr[index].getStartOffset());
+        // If tempText did not change
+        if(tempText.equals(queryField.getText())){ // No change
+            if(newIndex != oldIndex){ // Only runs if new and old indexes differ
+                setHighlight(index, allResultsHighlight);
+                index = newIndex;
+                setHighlight(newIndex, currResultHighlight);
+                scrollToQuery(highlightArr[index].getStartOffset());
+            }
+        } else{ // Changed
+            find(); // Searches for the new query
         }
     }
 
@@ -148,7 +153,6 @@ public class Find extends JDialog {
         index = 0;
         high.removeAllHighlights();
         try {
-//            Document doc = area.getDocument(); //doc.getText(0, doc.getLength());
             String text = area.getText();
             int pos = 0;
             while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) >= 0) {
@@ -160,10 +164,10 @@ public class Find extends JDialog {
         }
 
         highlightArr = high.getHighlights();            // Populates array of highlights
-        if(highlightArr.length > 0){ // Has one or more highlights
+        if(highlightArr.length > 0){ // 1+ matches
             setHighlight(index, currResultHighlight);   // Highlights index 0
             instanceSearch.setVisible(true);            // Enables prev and next buttons
-        } else{
+        } else{ // 0 matches
             instanceSearch.setVisible(false);           // Disables prev and next buttons
         }
     }
