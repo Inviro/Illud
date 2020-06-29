@@ -216,7 +216,7 @@ public class Find extends JDialog {
                 index = ((index > (highlightArr.length - 1)) ? 0 : index);      // Adjusts index to value in array
                 if(index > 0){                                                  // Checks for default value
                     // Not default, so changes highlights accordingly
-                    setHighlight(0, allResultsHighlight);
+                    setHighlights(allResultsHighlight);
                     setHighlight(index, currResultHighlight);
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
                 }
