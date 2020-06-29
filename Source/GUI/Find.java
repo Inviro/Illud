@@ -16,6 +16,7 @@ public class Find extends JDialog {
     private JButton nextButton;
     private JPanel instanceSearch;
     private JButton clearButton;
+    private JTextField replaceField;
     private JTextArea area;
 
     // Highlighter components
@@ -244,9 +245,11 @@ public class Find extends JDialog {
     // Sum of start and end offsets to ensure no change has occurred
     private int getHighlightArrCheckSum(){
         int sum = 0;
-        for(Highlighter.Highlight h : highlightArr){
-            sum += h.getStartOffset();
-            sum += h.getEndOffset();
+        if(highlightArr != null){
+            for(Highlighter.Highlight h : highlightArr){
+                sum += h.getStartOffset();
+                sum += h.getEndOffset();
+            }
         }
         return sum;
     }
