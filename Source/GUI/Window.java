@@ -6,7 +6,6 @@ import Source.Logic.FileOpener;
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
-import javax.swing.text.Document;                               // Used to listen for text change
 
 public class Window extends JFrame {
     // Window Variables
@@ -15,7 +14,6 @@ public class Window extends JFrame {
     private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
     private Find find;                                          // Find dialog
-    private FindAndReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
     private FileOpener fileOpener;                              // Opens files
@@ -24,7 +22,6 @@ public class Window extends JFrame {
     private JMenuItem open_menu_item;
     private JMenuItem dict_menu_item;
     private JMenuItem find_menu_item;
-    private JMenuItem find_replace_menu_item;
     private JMenuItem tts_menu_item;
     private JMenuItem about_menu_item;
 
@@ -106,7 +103,6 @@ public class Window extends JFrame {
         JMenu actions = new JMenu("Actions");                         // "Actions"
         dict_menu_item = new JMenuItem("Dictionary");               // "Actions" > "Dictionary"
         find_menu_item = new JMenuItem("Find");                     // "Actions" > "Find"
-        find_replace_menu_item = new JMenuItem("Find and Replace"); // "Actions" > "Find and Replace"
         tts_menu_item = new JMenuItem("Read Highlighted Text");     // "Actions" > "Read Highlighted Text"
         JMenu help = new JMenu("Help");                               // "Help"
         about_menu_item = new JMenuItem("About");                   // "Help" > About"
@@ -118,7 +114,6 @@ public class Window extends JFrame {
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
-        actions.add(find_replace_menu_item);
         actions.add(tts_menu_item);
         help.add(about_menu_item);
         this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
@@ -126,9 +121,6 @@ public class Window extends JFrame {
 
         find = new Find(userInput.getMainTextArea());                       // Creating Find Dialog
         find.setIconImage(illudIcon.getImage());                            // Sets Icon to Illud Icon
-
-        findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
-        findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
         dictionary.setIconImage(illudIcon.getImage());                      // Sets Icon to Illud Icon
@@ -163,11 +155,6 @@ public class Window extends JFrame {
         // Listener for Action > Find
         find_menu_item.addActionListener(e -> {
             find.setVisible(true);
-        });
-
-        // Listener for Action > Find and Replace
-        find_replace_menu_item.addActionListener(e -> {
-            findandReplace.setVisible(true);
         });
 
         // Listener for Action > Dictionary

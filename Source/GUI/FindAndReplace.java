@@ -3,6 +3,7 @@ package Source.GUI;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
+// Legacy code, its functionality was implemented in Find.
 public class FindAndReplace extends JDialog{
     private JPanel findAndReplace;
     private JButton buttonFind;
