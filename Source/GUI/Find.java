@@ -99,6 +99,7 @@ public class Find extends JDialog {
         }
     }
 
+    // Sets the highlight for a single element
     private void setHighlight(int index, Highlighter.HighlightPainter p){
         high.removeHighlight(highlightArr[index]);
         try{
@@ -107,6 +108,17 @@ public class Find extends JDialog {
         } catch (Exception e) { e.printStackTrace(); }
         String resultString = "Showing result: " + (index + 1) + " of " + highlightArr.length;
         instanceSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
+    }
+
+    // Overloaded function that sets highlights for all elements
+    private void setHighlights(Highlighter.HighlightPainter p){
+        for(int i = 0; i < highlightArr.length; i++){
+            high.removeHighlight(highlightArr[i]);
+            try{
+                highlightArr[i] = (Highlighter.Highlight) high.addHighlight(highlightArr[i].getStartOffset(),
+                        highlightArr[i].getEndOffset(), p);
+            } catch (Exception e) { e.printStackTrace(); }
+        }
     }
 
     // Previous instance of found string
@@ -188,9 +200,7 @@ public class Find extends JDialog {
                 // Text area did not change
                 queryField.setText(tempText);                               // Sets search bar to old text
                 if(highlightArr.length > 0){ // Has matches
-                    for(int i = 0; i < highlightArr.length; i++){           // For each highlight
-                        setHighlight(i, allResultsHighlight);               // Sets it to all results highlight color
-                    }
+                    setHighlights(allResultsHighlight);                     // Sets all highlight color
                     setHighlight(index, currResultHighlight);               // Sets current highlight color
                     scrollToQuery(highlightArr[index]);                     // Moves view box to cursor
                     instanceSearch.setVisible(true);                        // Shows the next and prev buttons
