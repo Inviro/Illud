@@ -124,16 +124,14 @@ public class Window extends JFrame {
         this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
         makeListeners();                                                    // Creates action listeners
 
-        find = new Find();                                                  // Creating Find Dialog
-        find.setSize(500, 150);                                 // Setting Dialog Size
-        find.setLocationRelativeTo(null);                                   // Centers Dialog
+        find = new Find(userInput.getMainTextArea());                       // Creating Find Dialog
+        find.setIconImage(illudIcon.getImage());                            // Sets Icon to Illud Icon
 
         findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
         findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
-        dictionary.setSize(500, 150);                           // Setting Dialog Size
-        dictionary.setLocationRelativeTo(null);                             // Centers Dialog
+        dictionary.setIconImage(illudIcon.getImage());                      // Sets Icon to Illud Icon
 
         about = new About();                                                // Creating About Dialog
         about.setIconImage(illudIcon.getImage());                           // Sets Icon to Illud Icon
@@ -145,25 +143,16 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-
         JList list = userInput.getJList();
-        Document doc = jTextArea.getDocument();
+
         // Listener for Document
-        doc.addDocumentListener(new DocumentListener() {
+        jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void insertUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void removeUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
+            public void changedUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
         });
 
         // Listener for File > Open
@@ -183,10 +172,17 @@ public class Window extends JFrame {
 
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
-            dictionary.setVisible(true);
+            // Gets Text from jTextArea
+            String text = jTextArea.getSelectedText();
+
+            if(text != null && text != ""){ // Highlighted Text
+                dictionary.setAndSearch(text);
+            } else{
+                dictionary.setVisible(true);
+            }
         });
 
-        // Listener for Action > Dictionary
+        // Listener for Action > About
         about_menu_item.addActionListener(e -> {
             about.setVisible(true);
         });
