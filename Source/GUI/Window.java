@@ -148,19 +148,11 @@ public class Window extends JFrame {
         // Listener for Document
         jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void insertUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void removeUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
+            public void changedUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
         });
 
         // Listener for File > Open

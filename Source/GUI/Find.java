@@ -28,6 +28,7 @@ public class Find extends JDialog {
     private int index;                              // Current index in search
     private boolean isHidden;                       // Used for when find window is closed to reshow results
     private String tempText;                        // Used to store the user search when hiding find
+    private int oldHash;                            // Used to check if the document changed while hiding
 
     public Find(JTextArea area) {
         this.area = area;
@@ -42,19 +43,21 @@ public class Find extends JDialog {
         this.setLocationRelativeTo(null);
         this.setTitle("Find");
 
+        // Listener that checks for window closing and opening events
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                isHidden = true;
-                tempText = queryField.getText();
-                onClear();
+                isHidden = true;                        // Find has been opened before and is hidden
+                tempText = queryField.getText();        // Saves query text
+                oldHash = area.getText().hashCode();    // Saves hash of current document
+                onClear();                              // Clears the window
             }
 
             @Override
             public void windowActivated(WindowEvent e) {
                 super.windowActivated(e);
-                if(isHidden){
+                if(isHidden){                           // Checks if window was opened before
                     reDisplay();
                     isHidden = false;
                 }
@@ -77,15 +80,14 @@ public class Find extends JDialog {
     }
 
     private void find() {
-        String input = queryField.getText();
-        if(tempText == null || !tempText.equals(input)){
-            if (!input.isEmpty()) {
-                highlight(input);
-            } else {
-                instanceSearch.setVisible(false);
+        tempText = queryField.getText();
+        if (!tempText.isEmpty()) {
+            highlight(tempText);
+            if(highlightArr.length > 0){
+                scrollToQuery(highlightArr[index].getStartOffset());
             }
-        } else{
-            tempText = input;
+        } else {
+            instanceSearch.setVisible(false);
         }
     }
 
@@ -95,28 +97,38 @@ public class Find extends JDialog {
             highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[index].getStartOffset(),
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
-        String resultString = "Showing " + (index + 1) + " of " + highlightArr.length + " results";
+        String resultString = "Showing result: " + (index + 1) + " of " + highlightArr.length;
         instanceSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
     }
 
     // Previous instance of found string
     private void onPrev() {
-        int newIdx = (index == 0) ? index : (index - 1);
-        if(newIdx != index){
-            setHighlight(index, allResultsHighlight);
-            index = newIdx;
-            setHighlight(newIdx, currResultHighlight);
-        }
+        int newIdx = (index == 0) ? highlightArr.length - 1 : (index - 1);
+        changeInstance(newIdx, index);
     }
 
     // Next instance of found string
     private void onNext() {
-        int newIdx = (index == highlightArr.length - 1) ? index : (index + 1);
-        if(newIdx != index){
+        int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
+        changeInstance(newIdx, index);
+    }
+
+    private void changeInstance(int newIndex, int oldIndex){
+        if(newIndex != oldIndex){
             setHighlight(index, allResultsHighlight);
-            index = newIdx;
-            setHighlight(newIdx, currResultHighlight);
+            index = newIndex;
+            setHighlight(newIndex, currResultHighlight);
+            scrollToQuery(highlightArr[index].getStartOffset());
         }
+    }
+
+    // Scrolls to query if it is off screen
+    private void scrollToQuery(int pos){
+        try{
+            java.awt.Rectangle view = area.modelToView(pos);    // Gets view rectangle where pos is visible
+            area.scrollRectToVisible(view);                     // Scroll to the rectangle
+            area.setCaretPosition(pos);                         // Sets carat position to pos
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     // Next instance of found string
@@ -126,18 +138,18 @@ public class Find extends JDialog {
         instanceSearch.setVisible(false);
     }
 
-    private class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
+    private static class highlighter extends DefaultHighlighter.DefaultHighlightPainter {
         public highlighter(Color color) {
             super(color);
         }
     }
 
     private void highlight(String pattern) {
-        high.removeAllHighlights();
         index = 0;
+        high.removeAllHighlights();
         try {
-            Document doc = area.getDocument();
-            String text = doc.getText(0, doc.getLength());
+//            Document doc = area.getDocument(); //doc.getText(0, doc.getLength());
+            String text = area.getText();
             int pos = 0;
             while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) >= 0) {
                 high.addHighlight(pos, pos + pattern.length(), allResultsHighlight);
@@ -147,25 +159,43 @@ public class Find extends JDialog {
             e.printStackTrace();
         }
 
-        highlightArr = high.getHighlights();
-        if(highlightArr.length > 0){
-            setHighlight(index, currResultHighlight);
-            instanceSearch.setVisible(true);
+        highlightArr = high.getHighlights();            // Populates array of highlights
+        if(highlightArr.length > 0){ // Has one or more highlights
+            setHighlight(index, currResultHighlight);   // Highlights index 0
+            instanceSearch.setVisible(true);            // Enables prev and next buttons
         } else{
-            instanceSearch.setVisible(false);
+            instanceSearch.setVisible(false);           // Disables prev and next buttons
         }
     }
 
     // Re displays find after it is closed
     private void reDisplay(){
-        if(!tempText.isEmpty()){
-            queryField.setText(tempText);
-            if(highlightArr.length > 0){
-                for(int i = 0; i < highlightArr.length; i++){
-                    setHighlight(i, allResultsHighlight);
+        if(!tempText.isEmpty()){                                            // Has saved query
+            if(area.getText().hashCode() == oldHash){                       // Area did not change since hiding
+                // Text area did not change
+                queryField.setText(tempText);                               // Sets search bar to old text
+                if(highlightArr.length > 0){ // Has matches
+                    for(int i = 0; i < highlightArr.length; i++){           // For each highlight
+                        setHighlight(i, allResultsHighlight);               // Sets it to all results highlight color
+                    }
+                    setHighlight(index, currResultHighlight);               // Sets current highlight color
+                    scrollToQuery(highlightArr[index].getStartOffset());    // Moves view box to cursor
+                    instanceSearch.setVisible(true);                        // Shows the next and prev buttons
                 }
-                setHighlight(index, currResultHighlight);
-                instanceSearch.setVisible(true);
+            }
+            else{
+                // Text area changed
+                queryField.setText(tempText);                               // Sets query field to old query
+                int tempIndex = index;                                      // Saves index before doing new search
+                find();                                                     // Searches new text based on old query
+                index = tempIndex;                                          // Sets index to old value
+                index = ((index > (highlightArr.length - 1)) ? 0 : index);  // Adjusts index to value in array
+                if(index > 0){                                              // Checks for default value
+                    // Not default, so changes highlights accordingly
+                    setHighlight(0, allResultsHighlight);
+                    setHighlight(index, currResultHighlight);
+                    scrollToQuery(highlightArr[index].getStartOffset());    // Moves view box to cursor
+                }
             }
         }
     }
