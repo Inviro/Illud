@@ -93,7 +93,7 @@ public class Dictionary extends JDialog {
 
                 // getting info from meanings array
                 JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
-                for (int i=0; i<meaningArray.size(); i++){
+                for (int i = 0; i<meaningArray.size(); i++){
 
                     JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
                     String type = (String) temp.get("partOfSpeech");  //type of speech
@@ -133,7 +133,7 @@ public class Dictionary extends JDialog {
     // Sets word input and searches
     public void setAndSearch(String query){
         this.wordInputTextField.setText(query);
-        this.onDefine();
         this.setVisible(true);
+        this.onDefine();
     }
 }

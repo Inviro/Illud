@@ -8,21 +8,26 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Find extends JDialog {
+    // GUI components
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField textField1;
+    private JTextField queryField;
     private JButton prevButton;
     private JButton nextButton;
     private JPanel instanceSearch;
     private JButton clearButton;
     private JTextArea area;
 
+    // Highlighter components
     private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.ORANGE);
     private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.YELLOW);
-    private Highlighter.Highlight[] highlightArr;
-    private Highlighter high;
-    private int index;
+
+    private Highlighter.Highlight[] highlightArr;   // Array of highlights of occurrences
+    private Highlighter high;                       // Highlights each element
+    private int index;                              // Current index in search
+    private boolean isHidden;                       // Used for when find window is closed to reshow results
+    private String tempText;                        // Used to store the user search when hiding find
 
     public Find(JTextArea area) {
         this.area = area;
@@ -37,6 +42,25 @@ public class Find extends JDialog {
         this.setLocationRelativeTo(null);
         this.setTitle("Find");
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                super.windowClosed(e);
+                isHidden = true;
+                tempText = queryField.getText();
+                onClear();
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+                super.windowActivated(e);
+                if(isHidden){
+                    reDisplay();
+                    isHidden = false;
+                }
+            }
+        });
+
         highlightArr = null;
         buttonOK.addActionListener(e -> find());
         buttonCancel.addActionListener(e -> onCancel());
@@ -45,6 +69,7 @@ public class Find extends JDialog {
         clearButton.addActionListener(e -> onClear());
         instanceSearch.setVisible(false);
         high = area.getHighlighter();
+        isHidden = false;
     }
 
     private void onCancel() {
@@ -52,11 +77,15 @@ public class Find extends JDialog {
     }
 
     private void find() {
-        String input = textField1.getText();
-        if (!input.isEmpty()) {
-            highlight(input);
-        } else {
-            instanceSearch.setVisible(false);
+        String input = queryField.getText();
+        if(tempText == null || !tempText.equals(input)){
+            if (!input.isEmpty()) {
+                highlight(input);
+            } else {
+                instanceSearch.setVisible(false);
+            }
+        } else{
+            tempText = input;
         }
     }
 
@@ -66,7 +95,7 @@ public class Find extends JDialog {
             highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[index].getStartOffset(),
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
-        String resultString = "Showing result " + (index + 1) + " of " + highlightArr.length + ".";
+        String resultString = "Showing " + (index + 1) + " of " + highlightArr.length + " results";
         instanceSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
     }
 
@@ -93,7 +122,7 @@ public class Find extends JDialog {
     // Next instance of found string
     private void onClear() {
         high.removeAllHighlights();
-        textField1.setText("");
+        queryField.setText("");
         instanceSearch.setVisible(false);
     }
 
@@ -124,6 +153,20 @@ public class Find extends JDialog {
             instanceSearch.setVisible(true);
         } else{
             instanceSearch.setVisible(false);
+        }
+    }
+
+    // Re displays find after it is closed
+    private void reDisplay(){
+        if(!tempText.isEmpty()){
+            queryField.setText(tempText);
+            if(highlightArr.length > 0){
+                for(int i = 0; i < highlightArr.length; i++){
+                    setHighlight(i, allResultsHighlight);
+                }
+                setHighlight(index, currResultHighlight);
+                instanceSearch.setVisible(true);
+            }
         }
     }
 }
