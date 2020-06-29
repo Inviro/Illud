@@ -81,7 +81,7 @@ public class Window extends JFrame {
         this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
         illudIcon = new ImageIcon(                              // New icon image composed of:
-                        getClass()                              // From the instance of current class:
+                getClass()                              // From the instance of current class:
                         .getResource(ICON_PATH));               // Get the resource at ICON_PATH
 
         // Setting Icon image in the JFrame
