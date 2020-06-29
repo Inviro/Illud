@@ -17,6 +17,9 @@ public class Find extends JDialog {
     private JPanel instanceSearch;
     private JButton clearButton;
     private JTextField replaceField;
+    private JButton replaceButton;
+    private JButton replaceAllButton;
+    private JCheckBox smartReplaceCheckBox;
     private JTextArea area;
 
     // Highlighter components
@@ -40,7 +43,7 @@ public class Find extends JDialog {
 
         contentPane.registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        this.setSize(600, 200);
+        this.setSize(600, 250);
         this.setLocationRelativeTo(null);
         this.setTitle("Find");
 
@@ -160,9 +163,9 @@ public class Find extends JDialog {
     private void scrollToQuery(Highlighter.Highlight h){
         int pos = h.getStartOffset();
         try{
-            java.awt.Rectangle view = area.modelToView(h.getEndOffset());   // Gets view rectangle where pos is visible
-            area.scrollRectToVisible(view);                                 // Scroll to the rectangle
-            area.setCaretPosition(pos);                                     // Sets carat position to pos
+            java.awt.geom.Rectangle2D view = area.modelToView2D(pos);   // View where pos is visible
+            area.scrollRectToVisible(view.getBounds());                 // Scroll to the rectangle
+            area.setCaretPosition(pos);                                 // Sets carat position to pos
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -235,8 +238,8 @@ public class Find extends JDialog {
     private void highlightElement(Highlighter.Highlight h){
         int pos = h.getEndOffset();
         try{
-            java.awt.Rectangle view = area.modelToView(pos);                    // View where pos is visible
-            area.scrollRectToVisible(view);                                     // Scroll to the rectangle
+            java.awt.geom.Rectangle2D view = area.modelToView2D(pos);           // View where pos is visible
+            area.scrollRectToVisible(view.getBounds());                         // Scroll to the rectangle
             area.setCaretPosition(pos);                                         // Sets carat position to pos
             area.moveCaretPosition(h.getStartOffset());                         // Highlights text
         } catch (Exception e) {e.printStackTrace();}
