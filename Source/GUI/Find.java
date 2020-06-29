@@ -48,13 +48,13 @@ public class Find extends JDialog {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                isHidden = true;                            // Find has been opened before and is hidden
-                tempText = queryField.getText();            // Saves query text
-                oldTextHash = area.getText().hashCode();    // Saves hash of current document
+                isHidden = true;                                        // Find has been opened before and is hidden
+                tempText = queryField.getText();                        // Saves query text
+                oldTextHash = area.getText().hashCode();                // Saves hash of current document
                 oldArrChecksum = getHighlightArrCheckSum();
-                onClear();                                  // Clears the window
-                if(highlightArr != null){
-                    highlightElement(highlightArr[index]);  // Highlights the search result
+                onClear();                                              // Clears the window
+                if(highlightArr != null && highlightArr.length > 0){
+                    highlightElement(highlightArr[index]);              // Highlights the search result
                 }
             }
 
@@ -204,21 +204,11 @@ public class Find extends JDialog {
     // Re displays find after it is closed
     private void reDisplay(){
         if(!tempText.isEmpty()){                                                // Has saved query
-            boolean textChanged = (area.getText().hashCode() == oldTextHash);   // Check for change in text input
-            boolean arrChanged = (oldArrChecksum == getHighlightArrCheckSum()); // Check for change in checksum
-            if(!textChanged && !arrChanged){                                    // Area did not change since hiding
-                // No change
-                queryField.setText(tempText);                                   // Sets search bar to old text
-                if(highlightArr.length > 0){ // Has matches
-                    setHighlights(allResultsHighlight);                         // Sets all highlight color
-                    setHighlight(index, currResultHighlight);                   // Sets current highlight color
-                    scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
-                    instanceSearch.setVisible(true);                            // Shows the next and prev buttons
-                }
-            }
-            else{
+            boolean textChanged = (area.getText().hashCode() != oldTextHash);   // Check for change in text input
+            boolean arrChanged = (oldArrChecksum != getHighlightArrCheckSum()); // Check for change in checksum
+            queryField.setText(tempText);                                       // Sets search bar to old text
+            if(textChanged || arrChanged){                                      // Area did not change since hiding
                 // Changed
-                queryField.setText(tempText);                                   // Sets query field to old query
                 int tempIndex = index;                                          // Saves index before doing new search
                 find();                                                         // Searches new text based on old query
                 index = tempIndex;                                              // Sets index to old value
@@ -228,6 +218,14 @@ public class Find extends JDialog {
                     setHighlight(0, allResultsHighlight);
                     setHighlight(index, currResultHighlight);
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
+                }
+            } else{
+                // No change
+                if(highlightArr.length > 0){ // Has matches
+                    setHighlights(allResultsHighlight);                         // Sets all highlight color
+                    setHighlight(index, currResultHighlight);                   // Sets current highlight color
+                    scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
+                    instanceSearch.setVisible(true);                            // Shows the next and prev buttons
                 }
             }
         }
@@ -243,11 +241,12 @@ public class Find extends JDialog {
         } catch (Exception e) {e.printStackTrace();}
     }
 
-    // Sum of start offsets
+    // Sum of start and end offsets to ensure no change has occurred
     private int getHighlightArrCheckSum(){
         int sum = 0;
         for(Highlighter.Highlight h : highlightArr){
             sum += h.getStartOffset();
+            sum += h.getEndOffset();
         }
         return sum;
     }
