@@ -2,7 +2,6 @@ package Source.GUI;
 
 import javax.swing.*;
 import javax.swing.text.DefaultHighlighter;
-import javax.swing.text.Document;
 import javax.swing.text.Highlighter;
 import java.awt.*;
 import java.awt.event.*;
@@ -81,12 +80,21 @@ public class Find extends JDialog {
 
     private void find() {
         tempText = queryField.getText();
+        String title = "Search Results";
         if (!tempText.isEmpty()) {
             highlight(tempText);
             if(highlightArr.length > 0){
-                scrollToQuery(highlightArr[index].getStartOffset());
+                scrollToQuery(highlightArr[index]);
+            }
+            else{
+                String message = "No results found for: \"" + tempText + "\"";
+                JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
+            JOptionPane.showMessageDialog(this,
+                    "Error: No input detected",
+                    title,
+                    JOptionPane.ERROR_MESSAGE);
             instanceSearch.setVisible(false);
         }
     }
@@ -120,7 +128,7 @@ public class Find extends JDialog {
                 setHighlight(index, allResultsHighlight);
                 index = newIndex;
                 setHighlight(newIndex, currResultHighlight);
-                scrollToQuery(highlightArr[index].getStartOffset());
+                scrollToQuery(highlightArr[index]);
             }
         } else{ // Changed
             find(); // Searches for the new query
@@ -128,11 +136,12 @@ public class Find extends JDialog {
     }
 
     // Scrolls to query if it is off screen
-    private void scrollToQuery(int pos){
+    private void scrollToQuery(Highlighter.Highlight h){
+        int pos = h.getStartOffset();
         try{
-            java.awt.Rectangle view = area.modelToView(pos);    // Gets view rectangle where pos is visible
-            area.scrollRectToVisible(view);                     // Scroll to the rectangle
-            area.setCaretPosition(pos);                         // Sets carat position to pos
+            java.awt.Rectangle view = area.modelToView(h.getEndOffset());   // Gets view rectangle where pos is visible
+            area.scrollRectToVisible(view);                                 // Scroll to the rectangle
+            area.setCaretPosition(pos);                                     // Sets carat position to pos
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -183,7 +192,7 @@ public class Find extends JDialog {
                         setHighlight(i, allResultsHighlight);               // Sets it to all results highlight color
                     }
                     setHighlight(index, currResultHighlight);               // Sets current highlight color
-                    scrollToQuery(highlightArr[index].getStartOffset());    // Moves view box to cursor
+                    scrollToQuery(highlightArr[index]);                     // Moves view box to cursor
                     instanceSearch.setVisible(true);                        // Shows the next and prev buttons
                 }
             }
@@ -198,7 +207,7 @@ public class Find extends JDialog {
                     // Not default, so changes highlights accordingly
                     setHighlight(0, allResultsHighlight);
                     setHighlight(index, currResultHighlight);
-                    scrollToQuery(highlightArr[index].getStartOffset());    // Moves view box to cursor
+                    scrollToQuery(highlightArr[index]);                     // Moves view box to cursor
                 }
             }
         }
