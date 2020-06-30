@@ -91,40 +91,9 @@ public class Dictionary extends JDialog {
                 URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
                 BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
-//                Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
-//
-//                JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
-
-                String output = parseDictionaryJSON(jsonParser.parse(reader));
                 resultSB = new StringBuffer();
-                System.out.println("parse output:" + output);
-                /*
-                // getting information from JSON Object
-                    String word = (String) dictJSON.get("word"); //getting word
-                    definitionJTextArea.append("Word: " + word + "\n\n");
-
-                    // getting info from meanings array
-                    JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
-                    for (int k = 0; k<meaningArray.size(); k++){
-
-                        JSONObject temp = (JSONObject) meaningArray.get(k);  //creating a temporary JSON Object for each array element
-                        String type = (String) temp.get("partOfSpeech");  //type of speech
-
-                        // making definition array into JSON Object
-                        JSONArray defArray = (JSONArray) temp.get("definitions");
-                        String definition = null;
-                        for (int j=0; j<defArray.size(); j++){
-                            JSONObject defJSON = (JSONObject) defArray.get(j);
-                            definition = (String) defJSON.get("definition");
-                        }
-                        System.out.println(definition);
-                    }
-                 */
-
-                ///
-//                System.out.println(array.size());
-//                ///
-//                for (int i = 0; i < array.size(); i++) {///
+                String output = parseDictionaryJSON(jsonParser.parse(reader));
+                System.out.println(output);
             }
             //Exceptions
             catch (MalformedURLException e){
@@ -157,23 +126,22 @@ public class Dictionary extends JDialog {
 
     // Recursive function for parsing the dictionary JSON file
     private String parseDictionaryJSON(Object o){
-        String result = "";
         try{
             if(o instanceof JSONObject){                        // If is JSONObject
-                result += getDictionaryEntry((JSONObject)o);    // Cast o to JSONObject and get dictionary results
+                getDictionaryEntry((JSONObject)o);              // Cast o to JSONObject and get dictionary results
             } else if (o instanceof JSONArray){                 // If is JSONArray
                 for(Object obj : (JSONArray)o){                 // Cast o to JSONArray and get dictionary results
-                    result += parseDictionaryJSON(obj) + "\n";
+                    parseDictionaryJSON(obj);
                 }
             }
         } catch (JsonException jsonException){
             jsonException.printStackTrace();
         }
-        return result;
+        return resultSB.toString();
     }
 
     // Displays
-    private String getDictionaryEntry(JSONObject jsonObject){
+    private void getDictionaryEntry(JSONObject jsonObject){
         // Keys to get each part of the dictionary entry
         final String PHONETIC = "phonetic";
         final String WORD = "word";
@@ -205,25 +173,24 @@ public class Dictionary extends JDialog {
                 getJSONStringFromKey(defObj, DEFINITION, definitionCount++, 2);
             }
         }
-        return "";
     }
 
     // Returns String from JSONObject from key if it exists as a String
-    private String getJSONStringFromKey(JSONObject jsonObject, String key){
+    private void getJSONStringFromKey(JSONObject jsonObject, String key){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                    // Simple entry
-            return key + " : " + o;                 // Returns string
+        if(o instanceof String){                        // Simple entry
+            resultSB.append(key + ": " + o + "\n");    // Returns string
         }
-        return "";                                  // Not string or null, so returns empty string
+        // Not string or null, so does nothing
     }
 
     // Returns String from JSONObject from key if it exists
     // Prints formatted index of array with tabbing
-    private String getJSONStringFromKey(JSONObject jsonObject, String key, int index, int tabbing){
+    private void getJSONStringFromKey(JSONObject jsonObject, String key, int index, int tabbing){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                                        // Simple entry
-            return "\t".repeat(tabbing) + key + " " + index + ": " + o; // Returns formatted string
+        if(o instanceof String){                                                            // Simple entry
+            resultSB.append("\t".repeat(tabbing) + key + " " + index + ": " + o + "\n") ;   // Returns formatted string
         }
-        return "";                                                      // Not string or null, so returns empty string
+        // Not string or null, so does nothing
     }
 }
