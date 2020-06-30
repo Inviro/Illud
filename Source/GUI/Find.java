@@ -114,6 +114,7 @@ public class Find extends JDialog {
             onClear();
             setPanelVis(false);
         }
+        this.getRootPane().setDefaultButton(findButton);
     }
 
     // Previous instance of found string
@@ -123,6 +124,7 @@ public class Find extends JDialog {
         // Determines new index based on old index and looping
         int newIdx = (index == 0) ? highlightArr.length - 1 : (index - 1);
         changeInstance(index, newIdx);
+        this.getRootPane().setDefaultButton(prevButton); // Sets default button to last pressed one
     }
 
     // Next instance of found string
@@ -132,6 +134,7 @@ public class Find extends JDialog {
         // Determines new index based on old index and looping
         int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
         changeInstance(index, newIdx);
+        this.getRootPane().setDefaultButton(nextButton); // Sets default button to last pressed one
     }
 
     // Next instance of found string
@@ -139,6 +142,7 @@ public class Find extends JDialog {
         high.removeAllHighlights();
         queryField.setText("");
         setPanelVis(false);
+        this.getRootPane().setDefaultButton(clearButton); // Sets default button to last pressed one
     }
 
     // Replace current instance
@@ -152,7 +156,7 @@ public class Find extends JDialog {
                         replaceField.getText()).toString()                  // with what is in replace field
         );
         reDisplay();                                                        // Re displays text
-        replaceField.requestFocusInWindow();                                // Gets focus for replace field
+        this.getRootPane().setDefaultButton(replaceButton);                 // Sets default button to last pressed one
     }
 
     // Replace all instances
@@ -167,7 +171,7 @@ public class Find extends JDialog {
         }
         high.removeAllHighlights();                                         // Clears all highlights
         onFind();                                                           // Does new search
-        replaceField.requestFocusInWindow();                                // Gets focus for replace field
+        this.getRootPane().setDefaultButton(replaceAllButton);              // Sets default button to last pressed one
     }
 
     // Sets the highlight for a single element
@@ -207,7 +211,6 @@ public class Find extends JDialog {
         } else{ // Changed
             onFind(); // Searches for the new query
         }
-        queryField.requestFocusInWindow(); // Gets focus for query field
     }
 
     // Scrolls to query if it is off screen
@@ -316,7 +319,7 @@ public class Find extends JDialog {
 
     // Behavior of enter key in the query box
     private void onQueryEnter(){
-        if(highlightArr != null){
+        if(highlightArr != null && highlightArr.length > 0){
             if(wasPrevLastCalled){
                 onPrev();
             } else{

@@ -75,14 +75,15 @@ public class Dictionary extends JDialog {
     // onDefine Function
     // Will initiate reading online JSON File and output to the JTextArea
     private void onDefine() {
-        definitionJTextArea.setText(null);          // Clear text area for new output
-        readJSON();                                 //retrieve definition
-        wordInputTextField.requestFocusInWindow();  // Gets focus for definition field
+        definitionJTextArea.setText(null);                  // Clear text area for new output
+        readJSON();                                         //retrieve definition
+        this.getRootPane().setDefaultButton(buttonDefine);  // Sets default button to last pressed one
     }
 
     // Will Close Window when initiated
     private void onCancel() {
         dispose();
+        this.getRootPane().setDefaultButton(buttonCancel);  // Sets default button to last pressed one
     }
 
     // Read JSON File from "https://api.dictionaryapi.dev/api/v2/entries/en/insertWordHere"
@@ -92,7 +93,7 @@ public class Dictionary extends JDialog {
         if(!input.isEmpty()){
             // Getting information from online JSON File
             try {
-
+                // Url is from Merriam Webster's Dictionary API
                 URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
                 BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
