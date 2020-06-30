@@ -20,7 +20,7 @@ public class FileOpener {
         scanner = null;                                                     // Initializing scanner object
 
         // Setting acceptable file types
-//        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
+        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
 
         acceptedFileTypes = new Vector<>();                                 // Holds accepted file types
         acceptedFileTypes.add("txt");                                       // Text files

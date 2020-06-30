@@ -162,14 +162,14 @@ public class Window extends JFrame {
             // Gets Text from jTextArea
             String text = jTextArea.getSelectedText();
 
-            if(text != null && text != ""){ // Highlighted Text
+            if(text != null && !text.equals("")){ // Highlighted Text
                 dictionary.setAndSearch(text);
             } else{
                 dictionary.setVisible(true);
             }
         });
 
-        // Listener for Action > About
+        // Listener for Help > About
         about_menu_item.addActionListener(e -> {
             about.setVisible(true);
         });
@@ -185,10 +185,22 @@ public class Window extends JFrame {
                 speak(text);            // Uses TTS on the text
             }
         });
+
+        // Assigning shortcut keys
+        assignCtrlListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
+        assignCtrlListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
+        assignCtrlListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
+        assignCtrlListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
+        assignCtrlListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
         String currentText = jTextArea.getText();
         jList.setListData(CounterUtil.getCounterData(currentText));
+    }
+
+    public static void assignCtrlListener(int key, JMenuItem jMenuItem){
+        jMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                key, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
     }
 }
