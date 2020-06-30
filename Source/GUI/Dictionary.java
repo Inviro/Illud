@@ -37,6 +37,7 @@ public class Dictionary extends JDialog {
     private static HashMap<String, String> displayMap;
 
     private StringBuffer resultSB;  // String buffer used to build result string
+    private int queryHash;  // Used to check if query changed or not
 
     public Dictionary() {
         setContentPane(contentPane);
@@ -70,14 +71,24 @@ public class Dictionary extends JDialog {
         displayMap.put(SPEECH_PART, "Part of Speech");
         displayMap.put(DEFINITIONS, "Definitions");
         displayMap.put(DEFINITION, "Definition");
+
+        queryHash = -1;
     }
 
     // onDefine Function
     // Will initiate reading online JSON File and output to the JTextArea
     private void onDefine() {
-        definitionJTextArea.setText(null);                  // Clear text area for new output
-        readJSON();                                         //retrieve definition
-        this.getRootPane().setDefaultButton(buttonDefine);  // Sets default button to last pressed one
+        String input = wordInputTextField.getText();
+        // Checks for valid and changed input
+        if(!input.isEmpty()){
+            if(input.hashCode() != queryHash){
+                queryHash = input.hashCode();                       // Sets input hash to new hash
+                definitionJTextArea.setText(null);                  // Clear text area for new output
+                readJSON(input);                                    // Display definition
+                this.getRootPane().setDefaultButton(buttonDefine);  // Sets default button to last pressed one
+            }
+            definitionJTextArea.setCaretPosition(0);                // Scrolls to top or first definition
+        }
     }
 
     // Will Close Window when initiated
@@ -87,34 +98,30 @@ public class Dictionary extends JDialog {
     }
 
     // Read JSON File from "https://api.dictionaryapi.dev/api/v2/entries/en/insertWordHere"
-    private void readJSON(){
-        // Get input from text field
-        String input = wordInputTextField.getText();
-        if(!input.isEmpty()){
-            // Getting information from online JSON File
-            try {
-                // Url is from Merriam Webster's Dictionary API
-                URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
-                BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
+    private void readJSON(String input){
+        // Getting information from online JSON File
+        try {
+            // Url is from Merriam Webster's Dictionary API
+            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
+            BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
-                resultSB = new StringBuffer();
-                String output = parseDictionaryJSON(jsonParser.parse(reader));
-                definitionJTextArea.setText(output);
-            }
-            //Exceptions
-            catch (MalformedURLException e){
-                JOptionPane.showMessageDialog(this, "Malformed URL: "  + e.getMessage() + "\n");
-            }
-            catch(FileNotFoundException e){
-                JOptionPane.showMessageDialog(this,
-                        "No definitions found for: " + wordInputTextField.getText() + "\n");
-            }
-            catch (ParseException e){
-                JOptionPane.showMessageDialog(this, "Parse Error :" + e.getMessage() + "\n");
-            }
-            catch (IOException e){
-                JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
-            }
+            resultSB = new StringBuffer();
+            String output = parseDictionaryJSON(jsonParser.parse(reader));
+            definitionJTextArea.setText(output);
+        }
+        //Exceptions
+        catch (MalformedURLException e){
+            JOptionPane.showMessageDialog(this, "Malformed URL: "  + e.getMessage() + "\n");
+        }
+        catch(FileNotFoundException e){
+            JOptionPane.showMessageDialog(this,
+                    "No definitions found for: " + wordInputTextField.getText() + "\n");
+        }
+        catch (ParseException e){
+            JOptionPane.showMessageDialog(this, "Parse Error :" + e.getMessage() + "\n");
+        }
+        catch (IOException e){
+            JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
         }
     }
 

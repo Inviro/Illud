@@ -54,7 +54,7 @@ public class Find extends JDialog {
         replaceButton.addActionListener(e -> onReplace());
         replaceAllButton.addActionListener(e -> onReplaceAll());
 
-        queryField.addActionListener(e -> onQueryEnter());
+        queryField.addActionListener(e -> onFind());
         replaceField.addActionListener(e -> onReplace());
 
         // Listener that checks for window closing and opening events
@@ -315,18 +315,5 @@ public class Find extends JDialog {
         }
         this.instancePanel.setVisible(isVis);
         this.replacePanel.setVisible(isVis);
-    }
-
-    // Behavior of enter key in the query box
-    private void onQueryEnter(){
-        if(highlightArr != null && highlightArr.length > 0){
-            if(wasPrevLastCalled){
-                onPrev();
-            } else{
-                onNext();
-            }
-        } else{
-            onFind();
-        }
     }
 }
