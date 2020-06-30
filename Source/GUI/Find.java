@@ -110,6 +110,7 @@ public class Find extends JDialog {
                     "Error: No input detected",
                     title,
                     JOptionPane.ERROR_MESSAGE);
+            onClear();
             setPanelVis(false);
         }
     }
@@ -206,7 +207,7 @@ public class Find extends JDialog {
 
     // Scrolls to query if it is off screen
     private void scrollToQuery(Highlighter.Highlight h){
-        int pos = h.getStartOffset();
+        int pos = h.getEndOffset();
         try{
             java.awt.geom.Rectangle2D view = area.modelToView2D(pos);   // View where pos is visible
             area.scrollRectToVisible(view.getBounds());                 // Scroll to the rectangle
@@ -252,7 +253,7 @@ public class Find extends JDialog {
             if(textChanged || arrChanged){                                      // Area did not change since hiding
                 // Changed
                 int tempIndex = index;                                          // Saves index before doing new search
-                onFind();                                                         // Searches new text based on old query
+                onFind();                                                       // Searches new text based on old query
                 index = tempIndex;                                              // Sets index to old value
                 index = ((index > (highlightArr.length - 1)) ? 0 : index);      // Adjusts index to value in array
                 if(index > 0){                                                  // Checks for default value

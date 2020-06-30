@@ -162,7 +162,7 @@ public class Window extends JFrame {
             // Gets Text from jTextArea
             String text = jTextArea.getSelectedText();
 
-            if(text != null && text != ""){ // Highlighted Text
+            if(text != null && !text.equals("")){ // Highlighted Text
                 dictionary.setAndSearch(text);
             } else{
                 dictionary.setVisible(true);

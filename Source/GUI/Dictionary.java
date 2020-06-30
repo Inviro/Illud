@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import groovy.json.JsonException;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -22,7 +23,18 @@ public class Dictionary extends JDialog {
     private JTextField wordInputTextField;
     private JTextArea definitionJTextArea;
 
+    // JSON variables
     private JSONParser jsonParser;
+
+    // Regex variables
+    private static java.util.regex.Pattern pattern;
+    private static java.util.regex.Matcher matcher;
+
+    // Regular expression that I made to find the first word of almost any string. - Abraham
+    // Works for words with single contractions.
+    private static final String regex = "^.*?([a-zA-Z']+'?[a-zA-Z']*)";
+
+    private StringBuffer resultSB;  // String buffer used to build result string
 
     public Dictionary() {
         setContentPane(contentPane);
@@ -33,12 +45,7 @@ public class Dictionary extends JDialog {
         buttonCancel.addActionListener(e -> onCancel());
 
         // call onCancel() when cross is clicked
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                onCancel();
-            }
-        });
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(e -> onCancel(),
@@ -48,13 +55,19 @@ public class Dictionary extends JDialog {
         this.setSize(600, 320);                     // Setting Dialog Size
         this.setLocationRelativeTo(null);                       // Centers Dialog
         this.setTitle("Dictionary");                            // Sets Dialog Title
+
+        pattern = java.util.regex.Pattern.compile(regex);   // Pattern to match
+        matcher = pattern.matcher(regex);                   // Matcher for the regular expression
+
+        // JSON Variables
+        jsonParser = new JSONParser(); // JSON parser
     }
 
     // onDefine Function
     // Will initiate reading online JSON File and output to the JTextArea
     private void onDefine() {
-        definitionJTextArea.setText(null); // Clear text area for new output
-        readJSON(); //retrieve definition
+        definitionJTextArea.setText(null);  // Clear text area for new output
+        readJSON();                         //retrieve definition
     }
 
     // Will Close Window when initiated
@@ -66,47 +79,52 @@ public class Dictionary extends JDialog {
     private void readJSON(){
         // Get input from text field
         String input = wordInputTextField.getText();
+        matcher.reset(input); // Runs regex on input
 
-        // Regular expression that I made to find the first word of almost any string. - Abraham
-        // Works for words with single contractions.
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^.*?([a-zA-Z']+'?[a-zA-Z']*)");
-        java.util.regex.Matcher matcher = pattern.matcher(input);
+        // Regex has capture groups
         if(matcher.find()){
-            input = matcher.group(1); // First matched input
-            this.wordInputTextField.setText(input);
+            this.wordInputTextField.setText(matcher.group(1)); // Sets text to second match group from regex
 
             // Getting information from online JSON File
             try {
-                jsonParser = new JSONParser(); //creating new JSON parser
 
                 URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
                 BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
-                Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
+//                Object obj = jsonParser.parse(reader);  //creating Object from JSON File read online
+//
+//                JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
 
-                JSONArray array = (JSONArray) obj; //making obj into a JSON Array (extra step because website closes everything in []
-                JSONObject dictJSON = (JSONObject) array.get(0); //Making array into object. defJSON should contain all objects from the web page
-
+                String output = parseDictionaryJSON(jsonParser.parse(reader));
+                resultSB = new StringBuffer();
+                System.out.println("parse output:" + output);
+                /*
                 // getting information from JSON Object
-                String word = (String) dictJSON.get("word"); //getting word
-                definitionJTextArea.append("Word: " + word + "\n\n");
+                    String word = (String) dictJSON.get("word"); //getting word
+                    definitionJTextArea.append("Word: " + word + "\n\n");
 
-                // getting info from meanings array
-                JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
-                for (int i = 0; i<meaningArray.size(); i++){
+                    // getting info from meanings array
+                    JSONArray meaningArray = (JSONArray) dictJSON.get("meanings");
+                    for (int k = 0; k<meaningArray.size(); k++){
 
-                    JSONObject temp = (JSONObject) meaningArray.get(i);  //creating a temporary JSON Object for each array element
-                    String type = (String) temp.get("partOfSpeech");  //type of speech
+                        JSONObject temp = (JSONObject) meaningArray.get(k);  //creating a temporary JSON Object for each array element
+                        String type = (String) temp.get("partOfSpeech");  //type of speech
 
-                    // making definition array into JSON Object
-                    JSONArray defArray = (JSONArray) temp.get("definitions");
-                    String definition = null;
-                    for (int j=0; j<defArray.size(); j++){
-                        JSONObject defJSON = (JSONObject) defArray.get(j);
-                        definition = (String) defJSON.get("definition");
+                        // making definition array into JSON Object
+                        JSONArray defArray = (JSONArray) temp.get("definitions");
+                        String definition = null;
+                        for (int j=0; j<defArray.size(); j++){
+                            JSONObject defJSON = (JSONObject) defArray.get(j);
+                            definition = (String) defJSON.get("definition");
+                        }
+                        System.out.println(definition);
                     }
-                    displayDef((i+1), type, definition);
-                }
+                 */
+
+                ///
+//                System.out.println(array.size());
+//                ///
+//                for (int i = 0; i < array.size(); i++) {///
             }
             //Exceptions
             catch (MalformedURLException e){
@@ -133,7 +151,79 @@ public class Dictionary extends JDialog {
     // Sets word input and searches
     public void setAndSearch(String query){
         this.wordInputTextField.setText(query);
-        this.setVisible(true);
         this.onDefine();
+        this.setVisible(true);
+    }
+
+    // Recursive function for parsing the dictionary JSON file
+    private String parseDictionaryJSON(Object o){
+        String result = "";
+        try{
+            if(o instanceof JSONObject){                        // If is JSONObject
+                result += getDictionaryEntry((JSONObject)o);    // Cast o to JSONObject and get dictionary results
+            } else if (o instanceof JSONArray){                 // If is JSONArray
+                for(Object obj : (JSONArray)o){                 // Cast o to JSONArray and get dictionary results
+                    result += parseDictionaryJSON(obj) + "\n";
+                }
+            }
+        } catch (JsonException jsonException){
+            jsonException.printStackTrace();
+        }
+        return result;
+    }
+
+    // Displays
+    private String getDictionaryEntry(JSONObject jsonObject){
+        // Keys to get each part of the dictionary entry
+        final String PHONETIC = "phonetic";
+        final String WORD = "word";
+        final String MEANINGS = "meanings";
+        final String SPEECH_PART = "partOfSpeech";
+        final String DEFINITIONS = "definitions";
+        final String DEFINITION = "definition";
+
+        // Meanings is another array inside the object
+        JSONArray meanings = (JSONArray)jsonObject.get(MEANINGS);
+
+        getJSONStringFromKey(jsonObject, WORD);
+        getJSONStringFromKey(jsonObject, PHONETIC);
+        getJSONStringFromKey(jsonObject, MEANINGS);
+
+        // Count of array elements
+        int partOfSpeechCount = 1;
+        int definitionCount = 1;
+
+        // For each meaning
+        for(Object meaning: meanings){
+            JSONObject meaningObj = (JSONObject)meaning;
+            getJSONStringFromKey(meaningObj, SPEECH_PART, partOfSpeechCount++, 1);
+
+            // Definitions is yet another array inside meanings
+            JSONArray definitions = (JSONArray)meaningObj.get(DEFINITIONS);
+            for(Object o : definitions){
+                JSONObject defObj = (JSONObject) o;
+                getJSONStringFromKey(defObj, DEFINITION, definitionCount++, 2);
+            }
+        }
+        return "";
+    }
+
+    // Returns String from JSONObject from key if it exists as a String
+    private String getJSONStringFromKey(JSONObject jsonObject, String key){
+        Object o = jsonObject.get(key);
+        if(o instanceof String){                    // Simple entry
+            return key + " : " + o;                 // Returns string
+        }
+        return "";                                  // Not string or null, so returns empty string
+    }
+
+    // Returns String from JSONObject from key if it exists
+    // Prints formatted index of array with tabbing
+    private String getJSONStringFromKey(JSONObject jsonObject, String key, int index, int tabbing){
+        Object o = jsonObject.get(key);
+        if(o instanceof String){                                        // Simple entry
+            return "\t".repeat(tabbing) + key + " " + index + ": " + o; // Returns formatted string
+        }
+        return "";                                                      // Not string or null, so returns empty string
     }
 }
