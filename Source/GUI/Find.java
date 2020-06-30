@@ -146,8 +146,8 @@ public class Find extends JDialog {
         if(!replaceOption.isSelected()) {                                   // Boundary checking is required
             area.setText(currentText.replaceAll(oldQuery, replacement));    // Replaces all of the instances
         } else{
-            String regexWord = String.format("\\b%s\\b", oldQuery);         // Regular expression for strict matches
-            area.setText(currentText.replaceAll(regexWord, replacement));   // Replaces all of the instances
+            String regexQuery = String.format("\\b%s\\b", oldQuery);        // Regular expression for strict matches
+            area.setText(currentText.replaceAll(regexQuery, replacement));  // Replaces all of the instances
         }
         high.removeAllHighlights();                                         // Clears all highlights
         onFind();                                                           // Does new search
@@ -284,7 +284,7 @@ public class Find extends JDialog {
     private void setPanelVis(boolean isVis){
         // Sets size depending on the GUI elements that are visible
         if(isVis){
-            this.setSize(726, 210);
+            this.setSize(750, 210);
         }
         else{
             this.setSize(600, 130);
