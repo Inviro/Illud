@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import groovy.json.JsonException;
 import org.json.simple.parser.JSONParser;
@@ -26,13 +27,14 @@ public class Dictionary extends JDialog {
     // JSON variables
     private JSONParser jsonParser;
 
-    // Regex variables
-    private static java.util.regex.Pattern pattern;
-    private static java.util.regex.Matcher matcher;
-
-    // Regular expression that I made to find the first word of almost any string. - Abraham
-    // Works for words with single contractions.
-    private static final String regex = "^.*?([a-zA-Z']+'?[a-zA-Z']*)";
+    // Keys to get each part of the dictionary entry
+    private static final String PHONETIC = "phonetic";
+    private static final String WORD = "word";
+    private static final String MEANINGS = "meanings";
+    private static final String SPEECH_PART = "partOfSpeech";
+    private static final String DEFINITIONS = "definitions";
+    private static final String DEFINITION = "definition";
+    private static HashMap<String, String> displayMap;
 
     private StringBuffer resultSB;  // String buffer used to build result string
 
@@ -41,8 +43,10 @@ public class Dictionary extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(buttonDefine);
 
+        // Setting listeners
         buttonDefine.addActionListener(e -> onDefine());
         buttonCancel.addActionListener(e -> onCancel());
+        wordInputTextField.addActionListener(e -> onDefine());
 
         // call onCancel() when cross is clicked
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -52,22 +56,28 @@ public class Dictionary extends JDialog {
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-        this.setSize(600, 320);                     // Setting Dialog Size
+        this.setSize(800, 400);                     // Setting Dialog Size
         this.setLocationRelativeTo(null);                       // Centers Dialog
         this.setTitle("Dictionary");                            // Sets Dialog Title
 
-        pattern = java.util.regex.Pattern.compile(regex);   // Pattern to match
-        matcher = pattern.matcher(regex);                   // Matcher for the regular expression
-
         // JSON Variables
         jsonParser = new JSONParser(); // JSON parser
+
+        // Used to display values of each part of a dictionary definition
+        displayMap = new HashMap<>();
+        displayMap.put(PHONETIC, "Pronunciation");
+        displayMap.put(WORD, "Word");
+        displayMap.put(SPEECH_PART, "Part of Speech");
+        displayMap.put(DEFINITIONS, "Definitions");
+        displayMap.put(DEFINITION, "Definition");
     }
 
     // onDefine Function
     // Will initiate reading online JSON File and output to the JTextArea
     private void onDefine() {
-        definitionJTextArea.setText(null);  // Clear text area for new output
-        readJSON();                         //retrieve definition
+        definitionJTextArea.setText(null);          // Clear text area for new output
+        readJSON();                                 //retrieve definition
+        wordInputTextField.requestFocusInWindow();  // Gets focus for definition field
     }
 
     // Will Close Window when initiated
@@ -79,12 +89,7 @@ public class Dictionary extends JDialog {
     private void readJSON(){
         // Get input from text field
         String input = wordInputTextField.getText();
-        matcher.reset(input); // Runs regex on input
-
-        // Regex has capture groups
-        if(matcher.find()){
-            this.wordInputTextField.setText(matcher.group(1)); // Sets text to second match group from regex
-
+        if(!input.isEmpty()){
             // Getting information from online JSON File
             try {
 
@@ -93,7 +98,7 @@ public class Dictionary extends JDialog {
 
                 resultSB = new StringBuffer();
                 String output = parseDictionaryJSON(jsonParser.parse(reader));
-                System.out.println(output);
+                definitionJTextArea.setText(output);
             }
             //Exceptions
             catch (MalformedURLException e){
@@ -110,11 +115,6 @@ public class Dictionary extends JDialog {
                 JOptionPane.showMessageDialog(this, "I/O Error: " + e.getMessage() + "\n");
             }
         }
-    }
-
-    // Outputs definition to text area
-    private void displayDef(int num, String type, String def){
-        definitionJTextArea.append("Definition " + num + "\nType: " + type + "\nDefinition: " + def +"\n\n");
     }
 
     // Sets word input and searches
@@ -142,20 +142,13 @@ public class Dictionary extends JDialog {
 
     // Displays
     private void getDictionaryEntry(JSONObject jsonObject){
-        // Keys to get each part of the dictionary entry
-        final String PHONETIC = "phonetic";
-        final String WORD = "word";
-        final String MEANINGS = "meanings";
-        final String SPEECH_PART = "partOfSpeech";
-        final String DEFINITIONS = "definitions";
-        final String DEFINITION = "definition";
-
-        // Meanings is another array inside the object
+        // Meanings is another JSONArray array inside the object
         JSONArray meanings = (JSONArray)jsonObject.get(MEANINGS);
 
-        getJSONStringFromKey(jsonObject, WORD);
-        getJSONStringFromKey(jsonObject, PHONETIC);
-        getJSONStringFromKey(jsonObject, MEANINGS);
+        // Appends each String for each part of the JSON file
+        appendJSONStringFromKey(jsonObject, WORD);
+        appendJSONStringFromKey(jsonObject, PHONETIC);
+        appendJSONStringFromKey(jsonObject, MEANINGS);
 
         // Count of array elements
         int partOfSpeechCount = 1;
@@ -163,34 +156,36 @@ public class Dictionary extends JDialog {
 
         // For each meaning
         for(Object meaning: meanings){
-            JSONObject meaningObj = (JSONObject)meaning;
-            getJSONStringFromKey(meaningObj, SPEECH_PART, partOfSpeechCount++, 1);
+            JSONObject meaningObj = (JSONObject)meaning; // Cast to JSONObject
+            appendJSONStringFromKey(meaningObj, SPEECH_PART, partOfSpeechCount++, 1); // Add formatted string
 
             // Definitions is yet another array inside meanings
             JSONArray definitions = (JSONArray)meaningObj.get(DEFINITIONS);
+            // For each definition
             for(Object o : definitions){
-                JSONObject defObj = (JSONObject) o;
-                getJSONStringFromKey(defObj, DEFINITION, definitionCount++, 2);
+                JSONObject defObj = (JSONObject) o; // Cast to JSONObject
+                appendJSONStringFromKey(defObj, DEFINITION, definitionCount++, 2);
             }
         }
     }
 
-    // Returns String from JSONObject from key if it exists as a String
-    private void getJSONStringFromKey(JSONObject jsonObject, String key){
+    // Appends String from JSONObject from key if it exists to string buffer object
+    private void appendJSONStringFromKey(JSONObject jsonObject, String key){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                        // Simple entry
-            resultSB.append(key + ": " + o + "\n");    // Returns string
+        if(o instanceof String){                                    // Simple entry
+            resultSB.append(displayMap.get(key) + ": " + o + "\n"); // Appends formatted string to string buffer
         }
-        // Not string or null, so does nothing
+        // Not string or null, so nothing happens
     }
 
-    // Returns String from JSONObject from key if it exists
+    // Appends String from JSONObject from key if it exists to string buffer object
     // Prints formatted index of array with tabbing
-    private void getJSONStringFromKey(JSONObject jsonObject, String key, int index, int tabbing){
+    private void appendJSONStringFromKey(JSONObject jsonObject, String key, int index, int num_tabs){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                                                            // Simple entry
-            resultSB.append("\t".repeat(tabbing) + key + " " + index + ": " + o + "\n") ;   // Returns formatted string
+        if(o instanceof String){                                                // Simple entry
+            resultSB.append("\t".repeat(num_tabs) +                             // Appends num_tabs tabs
+                    displayMap.get(key) + " " + index + ": " + o + "\n") ;      // Appends string to string buffer
         }
-        // Not string or null, so does nothing
+        // Not string or null, so nothing happens
     }
 }

@@ -1,6 +1,7 @@
 package Source.GUI;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import java.awt.*;
@@ -151,6 +152,7 @@ public class Find extends JDialog {
                         replaceField.getText()).toString()                  // with what is in replace field
         );
         reDisplay();                                                        // Re displays text
+        replaceField.requestFocusInWindow();                                // Gets focus for replace field
     }
 
     // Replace all instances
@@ -165,6 +167,7 @@ public class Find extends JDialog {
         }
         high.removeAllHighlights();                                         // Clears all highlights
         onFind();                                                           // Does new search
+        replaceField.requestFocusInWindow();                                // Gets focus for replace field
     }
 
     // Sets the highlight for a single element
@@ -175,7 +178,9 @@ public class Find extends JDialog {
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
         String resultString = "Result: " + (index + 1) + " of " + highlightArr.length;
-        instancePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
+        javax.swing.border.TitledBorder titledBorder = javax.swing.BorderFactory.createTitledBorder(resultString);
+        titledBorder.setTitlePosition(TitledBorder.BELOW_TOP);
+        instancePanel.setBorder(titledBorder);
     }
 
     // Overloaded function that sets highlights for all elements
