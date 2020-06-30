@@ -9,17 +9,20 @@ import java.awt.event.*;
 public class Find extends JDialog {
     // GUI components
     private JPanel contentPane;
-    private JButton buttonOK;
-    private JTextField queryField;
+    private JButton findButton;
     private JButton prevButton;
     private JButton nextButton;
-    private JPanel instanceSearch;
     private JButton clearButton;
-    private JTextField replaceField;
     private JButton replaceButton;
     private JButton replaceAllButton;
-    private JCheckBox replaceOption;
+
+    private JTextField queryField;
+    private JTextField replaceField;
+    private JPanel instancePanel;
     private JPanel replacePanel;
+
+    private JCheckBox replaceOption;
+
     private JTextArea area;
 
     // Highlighter components
@@ -38,12 +41,19 @@ public class Find extends JDialog {
         this.area = area;
         setContentPane(contentPane);
         setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-        contentPane.registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.setTitle("Find");
+
+        // Adding listeners
+        findButton.addActionListener(e -> onFind());
+        prevButton.addActionListener(e -> onPrev());
+        nextButton.addActionListener(e -> onNext());
+        clearButton.addActionListener(e -> onClear());
+        replaceButton.addActionListener(e -> onReplace());
+        replaceAllButton.addActionListener(e -> onReplaceAll());
+
+        queryField.addActionListener(l -> onFind());
+        replaceField.addActionListener(l -> onReplace());
 
         // Listener that checks for window closing and opening events
         addWindowListener(new WindowAdapter() {
@@ -63,20 +73,17 @@ public class Find extends JDialog {
             @Override
             public void windowActivated(WindowEvent e) {
                 super.windowActivated(e);
-                if(isHidden){           // Checks if window was opened before
-                    reDisplay();        // Re displays highlights
-                    isHidden = false;   // Sets sentinel value
+                if(isHidden){                       // Checks if window was opened before
+                    reDisplay();                    // Re displays highlights
+                    isHidden = false;               // Sets sentinel value
                 }
+                queryField.requestFocusInWindow();  // Gets focus for query field
             }
         });
 
-        // Adding listeners
-        buttonOK.addActionListener(e -> onFind());
-        prevButton.addActionListener(e -> onPrev());
-        nextButton.addActionListener(e -> onNext());
-        clearButton.addActionListener(e -> onClear());
-        replaceButton.addActionListener(e -> onReplace());
-        replaceAllButton.addActionListener(e -> onReplaceAll());
+        // Keyboard Listeners
+        contentPane.registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         setPanelVis(false);                 // Cannot access some GUI elements initially
         this.setLocationRelativeTo(null);   // Centers dialog
@@ -160,8 +167,8 @@ public class Find extends JDialog {
             highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[index].getStartOffset(),
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
-        String resultString = "Showing result: " + (index + 1) + " of " + highlightArr.length;
-        instanceSearch.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
+        String resultString = "Result: " + (index + 1) + " of " + highlightArr.length;
+        instancePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resultString));
     }
 
     // Overloaded function that sets highlights for all elements
@@ -248,7 +255,7 @@ public class Find extends JDialog {
                 }
             } else{
                 // No change
-                if(highlightArr.length > 0){ // Has matches
+                if(highlightArr != null && highlightArr.length > 0){            // Has matches
                     setHighlights(allResultsHighlight);                         // Sets all to highlight color
                     setHighlight(index, currResultHighlight);                   // Sets current highlight color
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
@@ -289,7 +296,7 @@ public class Find extends JDialog {
         else{
             this.setSize(600, 130);
         }
-        this.instanceSearch.setVisible(isVis);
+        this.instancePanel.setVisible(isVis);
         this.replacePanel.setVisible(isVis);
     }
 }
