@@ -36,6 +36,7 @@ public class Find extends JDialog {
     private String oldQuery;                        // Used to store the user search when hiding find
     private int oldTextHash;                        // Used to check if the document changed while hiding
     private int oldArrChecksum;                     // Same as above
+    private boolean wasPrevLastCalled;              // Used to determine behavior of enter key in find
 
     public Find(JTextArea area) {
         this.area = area;
@@ -52,8 +53,8 @@ public class Find extends JDialog {
         replaceButton.addActionListener(e -> onReplace());
         replaceAllButton.addActionListener(e -> onReplaceAll());
 
-        queryField.addActionListener(l -> onFind());
-        replaceField.addActionListener(l -> onReplace());
+        queryField.addActionListener(e -> onQueryEnter());
+        replaceField.addActionListener(e -> onReplace());
 
         // Listener that checks for window closing and opening events
         addWindowListener(new WindowAdapter() {
@@ -89,6 +90,7 @@ public class Find extends JDialog {
         this.setLocationRelativeTo(null);   // Centers dialog
         high = area.getHighlighter();       // Class highlighter variable
         isHidden = false;                   // Is not in hidden state
+        wasPrevLastCalled = false;          // Prev was not called
     }
 
     private void onFind() {
@@ -114,6 +116,8 @@ public class Find extends JDialog {
 
     // Previous instance of found string
     private void onPrev() {
+        wasPrevLastCalled = true;
+
         // Determines new index based on old index and looping
         int newIdx = (index == 0) ? highlightArr.length - 1 : (index - 1);
         changeInstance(index, newIdx);
@@ -121,6 +125,8 @@ public class Find extends JDialog {
 
     // Next instance of found string
     private void onNext() {
+        wasPrevLastCalled = false;
+
         // Determines new index based on old index and looping
         int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
         changeInstance(index, newIdx);
@@ -182,6 +188,7 @@ public class Find extends JDialog {
         }
     }
 
+    // Run by onNext and onPrev, generalizes their actions
     private void changeInstance(int oldIndex, int newIndex){
         // If tempText did not change
         if(oldQuery.equals(queryField.getText())){ // No change
@@ -194,6 +201,7 @@ public class Find extends JDialog {
         } else{ // Changed
             onFind(); // Searches for the new query
         }
+        queryField.requestFocusInWindow(); // Gets focus for query field
     }
 
     // Scrolls to query if it is off screen
@@ -298,5 +306,18 @@ public class Find extends JDialog {
         }
         this.instancePanel.setVisible(isVis);
         this.replacePanel.setVisible(isVis);
+    }
+
+    // Behavior of enter key in the query box
+    private void onQueryEnter(){
+        if(highlightArr != null){
+            if(wasPrevLastCalled){
+                onPrev();
+            } else{
+                onNext();
+            }
+        } else{
+            onFind();
+        }
     }
 }
