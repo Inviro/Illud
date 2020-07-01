@@ -6,7 +6,6 @@ import Source.Logic.FileOpener;
 import javax.swing.*;                                           // Used for GUI
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
-import javax.swing.text.Document;                               // Used to listen for text change
 
 public class Window extends JFrame {
     // Window Variables
@@ -15,7 +14,6 @@ public class Window extends JFrame {
     private ImageIcon illudIcon;                                // Used to set icons of dialog classes
 
     private Find find;                                          // Find dialog
-    private FindAndReplace findandReplace;                      // Find and Replace dialog
     private Dictionary dictionary;                              // Dictionary dialog
     private About about;                                        // About dialog
     private FileOpener fileOpener;                              // Opens files
@@ -24,7 +22,6 @@ public class Window extends JFrame {
     private JMenuItem open_menu_item;
     private JMenuItem dict_menu_item;
     private JMenuItem find_menu_item;
-    private JMenuItem find_replace_menu_item;
     private JMenuItem tts_menu_item;
     private JMenuItem about_menu_item;
 
@@ -106,7 +103,6 @@ public class Window extends JFrame {
         JMenu actions = new JMenu("Actions");                         // "Actions"
         dict_menu_item = new JMenuItem("Dictionary");               // "Actions" > "Dictionary"
         find_menu_item = new JMenuItem("Find");                     // "Actions" > "Find"
-        find_replace_menu_item = new JMenuItem("Find and Replace"); // "Actions" > "Find and Replace"
         tts_menu_item = new JMenuItem("Read Highlighted Text");     // "Actions" > "Read Highlighted Text"
         JMenu help = new JMenu("Help");                               // "Help"
         about_menu_item = new JMenuItem("About");                   // "Help" > About"
@@ -118,7 +114,6 @@ public class Window extends JFrame {
         file.add(open_menu_item);
         actions.add(dict_menu_item);
         actions.add(find_menu_item);
-        actions.add(find_replace_menu_item);
         actions.add(tts_menu_item);
         help.add(about_menu_item);
         this.setJMenuBar(jMenuBar);                                         // Sets the menu bar
@@ -126,9 +121,6 @@ public class Window extends JFrame {
 
         find = new Find(userInput.getMainTextArea());                       // Creating Find Dialog
         find.setIconImage(illudIcon.getImage());                            // Sets Icon to Illud Icon
-
-        findandReplace = new FindAndReplace(userInput.getMainTextArea());   // Creating Find and Replace Dialog
-        findandReplace.setIconImage(illudIcon.getImage());                  // Sets Icon to Illud Icon
 
         dictionary = new Dictionary();                                      // Creating Dictionary Dialog
         dictionary.setIconImage(illudIcon.getImage());                      // Sets Icon to Illud Icon
@@ -148,19 +140,11 @@ public class Window extends JFrame {
         // Listener for Document
         jTextArea.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void insertUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
-
+            public void removeUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                updateCounters(jTextArea, list);
-            }
+            public void changedUpdate(DocumentEvent e) { updateCounters(jTextArea, list); }
         });
 
         // Listener for File > Open
@@ -173,24 +157,19 @@ public class Window extends JFrame {
             find.setVisible(true);
         });
 
-        // Listener for Action > Find and Replace
-        find_replace_menu_item.addActionListener(e -> {
-            findandReplace.setVisible(true);
-        });
-
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
             // Gets Text from jTextArea
             String text = jTextArea.getSelectedText();
 
-            if(text != null && text != ""){ // Highlighted Text
+            if(text != null && !text.equals("")){ // Highlighted Text
                 dictionary.setAndSearch(text);
             } else{
                 dictionary.setVisible(true);
             }
         });
 
-        // Listener for Action > About
+        // Listener for Help > About
         about_menu_item.addActionListener(e -> {
             about.setVisible(true);
         });
@@ -206,10 +185,22 @@ public class Window extends JFrame {
                 speak(text);            // Uses TTS on the text
             }
         });
+
+        // Assigning shortcut keys
+        assignCtrlListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
+        assignCtrlListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
+        assignCtrlListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
+        assignCtrlListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
+        assignCtrlListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
         String currentText = jTextArea.getText();
         jList.setListData(CounterUtil.getCounterData(currentText));
+    }
+
+    public static void assignCtrlListener(int key, JMenuItem jMenuItem){
+        jMenuItem.setAccelerator(KeyStroke.getKeyStroke(
+                key, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
     }
 }

@@ -3,6 +3,7 @@ package Source.GUI;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 
+// Legacy code, its functionality was implemented in Find.
 public class FindAndReplace extends JDialog{
     private JPanel findAndReplace;
     private JButton buttonFind;
@@ -30,23 +31,23 @@ public class FindAndReplace extends JDialog{
     }
 
     private void onFind() {
-        String a = t1.getText();                                // Find field
-        String a1 = String.format("\\b%s\\b", a);               // Regular expression to find exact matches per word
-        String b = t2.getText();                                // Replace field
-        String c = area.getText();                              // Assign text from mainTextArea
+        String findText = t1.getText();                                 // Find field
+        String regexText = String.format("\\b%s\\b", findText);         // Regular expression to find exact matches per word
+        String replaceText = t2.getText();                              // Replace field
+        String mainText = area.getText();                               // Assign text from mainTextArea
 
         JOptionPane.showMessageDialog(this,
                 "Are you sure you want to " +
-                        "replace \"" + a + "\" with \"" + b + "\"" +
+                        "replace \"" + findText + "\" with \"" + replaceText + "\"" +
                         "? \nPress ok to continue.");
 
         // Makes sure that there is something to replace
-        if(!a.isEmpty()){
+        if(!findText.isEmpty()){
             // Checks if word boundary checking is required
             if(!replaceOption.isSelected()){        // Boundary checking is required
-                area.setText(c.replaceAll(a, b));   // Replaces all exact word matches
+                area.setText(mainText.replaceAll(findText, replaceText));   // Replaces all exact word matches
             } else{                                 // Boundary checking not required
-                area.setText(c.replaceAll(a1, b));  // Simple replace
+                area.setText(mainText.replaceAll(regexText, replaceText));  // Simple replace
             }
         }
     }
