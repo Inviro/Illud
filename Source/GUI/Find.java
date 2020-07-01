@@ -40,7 +40,8 @@ public class Find extends JDialog {
     private static final int DIALOG_WIDTH = 500;
     private static final int SMALL_DIALOG_HEIGHT = 140;
     private static final int BIG_DIALOG_HEIGHT = 240;
-    private static final String SEARCH_TITLE = "Search Results";
+    private static final String SEARCH_DIALOG_TITLE = "Search Results";
+    private static final String DEFAULT_TITLE = "Find";
 
     public Find(JTextArea area) {
         area.setAutoscrolls(true);
@@ -48,7 +49,7 @@ public class Find extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setTitle("Find");
+        this.setTitle(DEFAULT_TITLE);
 
         // Adding listeners
         prevButton.addActionListener(e -> onPrev());
@@ -94,8 +95,9 @@ public class Find extends JDialog {
         oldQuery = "";                      // Initializes query storage
     }
 
+    // Runs on find
     private void onFind() {
-        String newQuery = queryField.getText();
+        String newQuery = queryField.getText(); // Text in find bar
         if (!newQuery.isEmpty()) {
             if(hasQueryChanged() | hasStateChanged()){
                 highlightText(newQuery);
@@ -105,7 +107,7 @@ public class Find extends JDialog {
                 else{
                     JOptionPane.showMessageDialog(this,
                             "Error: No results found for: \"" + newQuery + "\"",
-                            SEARCH_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                            SEARCH_DIALOG_TITLE, JOptionPane.INFORMATION_MESSAGE);
                     high.removeAllHighlights();
                     newQuery += " ";
                 }
@@ -115,7 +117,7 @@ public class Find extends JDialog {
         } else {
             JOptionPane.showMessageDialog(this,
                     "Error: No input detected",
-                    SEARCH_TITLE,
+                    SEARCH_DIALOG_TITLE,
                     JOptionPane.ERROR_MESSAGE);
             high.removeAllHighlights();
             setPanelVis(false);
@@ -250,6 +252,7 @@ public class Find extends JDialog {
 
     // Initializes highlight array based on pattern
     private void highlightText(String pattern) {
+        System.out.println("New Search");
         index = 0;
         high.removeAllHighlights();
         try {
@@ -279,16 +282,16 @@ public class Find extends JDialog {
             if(hasStateChanged() | hasQueryChanged()){                          // Area or query has changed
                 // Changed
                 int temp = index;                                               // Saves index before doing new search
-                highlightText(queryText);                                       // Searches new text based on old query
+                highlightText(queryText);                                       // Searches new text based on old query;
                 index = ((temp > (highlightArr.length - 1)) ? 0 : temp);        // Adjusts index to value in array
             } else{
                 if(isInstanceValid()){                                          // Has matches
-                    setHighlights(allResultsHighlight);                         // Sets all to highlight color
-                    setHighlight(index, currResultHighlight);                   // Sets index to current highlight color
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
                     setPanelVis(true);                                          // Shows GUI elements
                 }
             }
+            setHighlights(allResultsHighlight);                                 // Sets all to highlight color
+            setHighlight(index, currResultHighlight);                           // Sets index to current highlight color
         }
     }
 
@@ -321,14 +324,16 @@ public class Find extends JDialog {
             this.setSize(DIALOG_WIDTH, BIG_DIALOG_HEIGHT);
         }
         else{
+            // Resets to default state with default title and dimensions
             this.setSize(DIALOG_WIDTH, SMALL_DIALOG_HEIGHT);
-            javax.swing.border.TitledBorder titledBorder = javax.swing.BorderFactory.createTitledBorder("Find");
+            javax.swing.border.TitledBorder titledBorder = javax.swing.BorderFactory.createTitledBorder(DEFAULT_TITLE);
             titledBorder.setTitleJustification(TitledBorder.CENTER);
             findPanel.setBorder(titledBorder);
         }
         this.replacePanel.setVisible(isVis);
     }
 
+    // Returns a boolean value of whether either the text field hash or highlight object array checksum changed
     private boolean hasStateChanged(){
         boolean textChanged = (oldTextHash != area.getText().hashCode());       // Check for change in text input
         boolean arrChanged = (oldArrChecksum != getHighlightArrCheckSum());     // Check for change in checksum
@@ -336,6 +341,7 @@ public class Find extends JDialog {
         return (textChanged | arrChanged);                                      // Returns if change was detected
     }
 
+    // Saves the last state to be used in the above function
     private void setLastState(){
         oldTextHash = area.getText().hashCode();                                // Saves hash of current document
         oldArrChecksum = getHighlightArrCheckSum();                             // Saves checksum of highlight array

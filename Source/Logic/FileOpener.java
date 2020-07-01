@@ -11,7 +11,7 @@ public class FileOpener {
     // Class Variables
     private Scanner scanner;                                                // Scanner for getting input
     private JFileChooser fc;                                                // File Chooser
-    private Vector<String> acceptedFileTypes;
+    private Vector<String> acceptedFileTypes;                               // String vector of accepted file types
 
     // Default Constructor
     public FileOpener(){
@@ -20,7 +20,7 @@ public class FileOpener {
         scanner = null;                                                     // Initializing scanner object
 
         // Setting acceptable file types
-        fc.setAcceptAllFileFilterUsed(false);                             // Does not accept all file types
+        fc.setAcceptAllFileFilterUsed(false);                               // Does not accept all file types
 
         acceptedFileTypes = new Vector<>();                                 // Holds accepted file types
         acceptedFileTypes.add("txt");                                       // Text files
@@ -30,7 +30,7 @@ public class FileOpener {
                 if (f.isDirectory()){                                       // Allows folders to be selected
                     return true;
                 } else{
-                    String filename = f.getName().toLowerCase();
+                    String filename = f.getName().toLowerCase();            //
                     for(String ele: acceptedFileTypes){                     // For each accepted file type
                         if (filename.endsWith(ele)){                        // Returns true if suffix type is accepted
                             return true;
@@ -44,9 +44,9 @@ public class FileOpener {
                 // Creating accepted file type descriptions
                 String temp = "Text Files ";
                 for(String ele: acceptedFileTypes) {                        // For each accepted file type
-                    temp += "(*." + ele + ") ";
+                    temp += "(*." + ele + ") ";                             // Generates file type description
                 }
-                return temp;
+                return temp;                                                // Returns total file type description
             }
         });
     }
