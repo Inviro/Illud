@@ -10,8 +10,8 @@ import java.util.Vector;
 public class FileOpener {
     // Class Variables
     private Scanner scanner;                                                // Scanner for getting input
-    private JFileChooser fc;                                                // File Chooser
-    private Vector<String> acceptedFileTypes;                               // String vector of accepted file types
+    private final JFileChooser fc;                                          // File Chooser
+    private final Vector<String> acceptedFileTypes;                         // String vector of accepted file types
 
     // Default Constructor
     public FileOpener(){
@@ -42,11 +42,14 @@ public class FileOpener {
             @Override
             public String getDescription() {
                 // Creating accepted file type descriptions
-                String temp = "Text Files ";
+                StringBuilder temp = new StringBuilder("Text Files ");
                 for(String ele: acceptedFileTypes) {                        // For each accepted file type
-                    temp += "(*." + ele + ") ";                             // Generates file type description
+                    // Generates file type description
+                    temp.append("(*.");
+                    temp.append(ele);
+                    temp.append(") ");
                 }
-                return temp;                                                // Returns total file type description
+                return temp.toString();                                     // Returns total file type description
             }
         });
     }

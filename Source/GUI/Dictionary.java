@@ -25,7 +25,7 @@ public class Dictionary extends JDialog {
     private JTextArea definitionJTextArea;
 
     // JSON variables
-    private JSONParser jsonParser;
+    private final JSONParser jsonParser;
 
     // Keys to get each part of the dictionary entry
     private static final String PHONETIC = "phonetic";
@@ -182,7 +182,12 @@ public class Dictionary extends JDialog {
     private void appendJSONStringFromKey(JSONObject jsonObject, String key){
         Object o = jsonObject.get(key);
         if(o instanceof String){                                    // Simple entry
-            resultSB.append(displayMap.get(key) + ": " + o + "\n"); // Appends formatted string to string buffer
+            // Appends formatted string to string buffer
+            // Append is used multiple times instead of concatenation since string buffer has better performance
+            resultSB.append(displayMap.get(key));
+            resultSB.append(": ");
+            resultSB.append(o);
+            resultSB.append("\n");
         }
         // Not string or null, so nothing happens
     }
@@ -191,9 +196,16 @@ public class Dictionary extends JDialog {
     // Prints formatted index of array with tabbing
     private void appendJSONStringFromKey(JSONObject jsonObject, String key, int index, int num_tabs){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                                                // Simple entry
-            resultSB.append("\t".repeat(num_tabs) +                             // Appends num_tabs tabs
-                    displayMap.get(key) + " " + index + ": " + o + "\n") ;      // Appends string to string buffer
+        if(o instanceof String){                        // Simple entry
+            // Appends string to string buffer
+            // Append is used multiple times instead of concatenation since string buffer has better performance
+            resultSB.append("\t".repeat(num_tabs));     // Appends num_tabs tabs
+            resultSB.append(displayMap.get(key));
+            resultSB.append(" ");
+            resultSB.append(index);
+            resultSB.append(" : ");
+            resultSB.append(o);
+            resultSB.append("\n");
         }
         // Not string or null, so nothing happens
     }

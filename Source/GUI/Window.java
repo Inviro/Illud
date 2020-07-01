@@ -3,20 +3,29 @@ import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
 import Source.Logic.FileOpener;
 
-import javax.swing.*;                                           // Used for GUI
+// GUI Imports
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
+import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+import javax.swing.JList;
+import javax.swing.KeyStroke;
 
 public class Window extends JFrame {
     // Window Variables
-    private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
-    private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
-    private ImageIcon illudIcon;                                // Used to set icons of dialog classes
+    private static final String ICON_PATH = "/Resources/icon.png";  // Path to the icon
+    private static final String WIN_NAME = "Illud - Text Analysis"; // Name of the window
+    private static ImageIcon illudIcon;                             // Used to set icons of dialog classes
 
-    private Find find;                                          // Find dialog
-    private Dictionary dictionary;                              // Dictionary dialog
-    private About about;                                        // About dialog
-    private FileOpener fileOpener;                              // Opens files
+    private Find find;                                              // Find dialog
+    private Dictionary dictionary;                                  // Dictionary dialog
+    private About about;                                            // About dialog
+    private FileOpener fileOpener;                                  // Opens files
 
     // JMenuItems to add listeners to in the menu
     private JMenuItem open_menu_item;
@@ -26,19 +35,19 @@ public class Window extends JFrame {
     private JMenuItem about_menu_item;
 
     // UserInput variables
-    private UserInput userInput;                                // Form for user input
+    private UserInput userInput;                                    // Form for user input
 
     // Text to Speech Variables
-    private TextToSpeech tts;                                   // Text to speech object
-    private float volume;                                       // Volume of Text To Speech
+    private final TextToSpeech tts;                                 // Text to speech object
+    private final float volume;                                     // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
     private enum Voice{
         poppy("dfki-poppy-hsmm"),
         rms("cmu-rms-hsmm"),
         slt("cmu-slt-hsmm");
-        public final String voiceString;                        // Unmodifiable value
-        Voice(String vS){                                       // Enum constructor
+        public final String voiceString;                            // Unmodifiable value
+        Voice(String vS){                                           // Enum constructor
             this.voiceString = vS;
         }
     }
@@ -58,7 +67,7 @@ public class Window extends JFrame {
         catch (Exception e) { // Theme is not found
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // Sets to default theme
-            } catch (Exception ex) {}
+            } catch (Exception ex) { e.printStackTrace(); }
         }
 
         // Initializing text to speech
@@ -148,14 +157,10 @@ public class Window extends JFrame {
         });
 
         // Listener for File > Open
-        open_menu_item.addActionListener(e -> {
-            fileOpener.activate(this, userInput);
-        });
+        open_menu_item.addActionListener(e -> fileOpener.activate(this, userInput));
 
         // Listener for Action > Find
-        find_menu_item.addActionListener(e -> {
-            find.setVisible(true);
-        });
+        find_menu_item.addActionListener(e -> find.setVisible(true));
 
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
@@ -170,19 +175,17 @@ public class Window extends JFrame {
         });
 
         // Listener for Help > About
-        about_menu_item.addActionListener(e -> {
-            about.setVisible(true);
-        });
+        about_menu_item.addActionListener(e -> about.setVisible(true));
 
         tts_menu_item.addActionListener(e -> {
             // Gets Text from jTextArea
             String text = jTextArea.getSelectedText();
 
             // No text highlighted
-            if(text == null){           // If text is null end TTS playback
+            if(text == null){                   // If text is null end TTS playback
                 endSpeak();
-            } else if (text != ""){     // Checks if text is not empty
-                speak(text);            // Uses TTS on the text
+            } else if (!text.equals("")){       // Checks if text is not empty
+                speak(text);                    // Uses TTS on the text
             }
         });
 

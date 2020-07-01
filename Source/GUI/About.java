@@ -35,13 +35,13 @@ public class About extends JDialog {
                     if(e.getURL() != null){ // Web link
                         try{
                             Desktop.getDesktop().browse(e.getURL().toURI()); // Open in browser
-                        } catch (Exception ex) { ex.printStackTrace(); };
+                        } catch (Exception ex) { ex.printStackTrace(); }
                     } else{ // File
                         try{
                             String filePath = new File("").getAbsolutePath();
                             filePath += "/" + e.getDescription();
                             Desktop.getDesktop().open(new File(filePath)); // Opens file using description
-                        } catch (Exception ex) { ex.printStackTrace(); };
+                        } catch (Exception ex) { ex.printStackTrace(); }
                     }
                 }
             }

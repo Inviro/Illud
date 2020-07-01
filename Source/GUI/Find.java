@@ -22,7 +22,7 @@ public class Find extends JDialog {
     private JCheckBox replaceOption;
     private JPanel findPanel;
 
-    private JTextArea area;
+    private final JTextArea area;
 
     // Highlighter components
     private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.ORANGE);
@@ -158,7 +158,7 @@ public class Find extends JDialog {
 
     // Replace current instance
     private void onReplace(){
-        java.lang.StringBuffer sb = new StringBuffer(area.getText());       // New string buffer
+        StringBuilder sb = new StringBuilder(area.getText());               // New string builder
         int startPos = highlightArr[index].getStartOffset();
         int endPos = highlightArr[index].getEndOffset();
         area.setText(                                                       // Setting text of main text area
@@ -252,7 +252,6 @@ public class Find extends JDialog {
 
     // Initializes highlight array based on pattern
     private void highlightText(String pattern) {
-        System.out.println("New Search");
         index = 0;
         high.removeAllHighlights();
         try {
