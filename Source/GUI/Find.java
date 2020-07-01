@@ -160,7 +160,11 @@ public class Find extends JDialog {
                         endPos,                                             // to endPos
                         replaceField.getText()).toString()                  // with what is in replace field
         );
-        reDisplay();                                                        // Re displays text
+        int oldIndex = index;                                               // Saves current index
+        highlightText(oldQuery);                                            // Gets new text
+        if(--oldIndex > 0){                                                 // If oldIndex can be decremented safely
+            changeInstance(index, oldIndex);                                // Move cursor to old spot
+        }
         this.getRootPane().setDefaultButton(replaceButton);                 // Sets default button to last pressed one
     }
 
@@ -174,7 +178,6 @@ public class Find extends JDialog {
             String regexQuery = String.format("\\b%s\\b", oldQuery);        // Regular expression for strict matches
             area.setText(newQuery.replaceAll(regexQuery, replacement));     // Replaces all of the instances
         }
-        high.removeAllHighlights();                                         // Removes all highlights
         highlightText(oldQuery);                                            // Does new search
         this.getRootPane().setDefaultButton(replaceAllButton);              // Sets default button to last pressed one
     }
@@ -273,7 +276,7 @@ public class Find extends JDialog {
     private void reDisplay(){
         if(!oldQuery.isEmpty()){                                                // Has saved query
             queryField.setText(oldQuery);                                       // Sets search bar to old text
-            if(hasChanged()){                                                   // Area did changed during hiding
+            if(hasChanged()){                                                   // Area changed during hiding
                 // Changed
                 int tempIndex = index;                                          // Saves index before doing new search
                 onFind();                                                       // Searches new text based on old query
@@ -335,8 +338,8 @@ public class Find extends JDialog {
     private boolean hasChanged(){
         boolean textChanged = (oldTextHash == area.getText().hashCode());       // Check for change in text input
         boolean arrChanged = (oldArrChecksum == getHighlightArrCheckSum());     // Check for change in checksum
-        setLastState();
-        return textChanged || arrChanged;
+        setLastState();                                                         // Sets current machine state
+        return textChanged | arrChanged;                                        // Returns if change was detected
     }
 
     private void setLastState(){

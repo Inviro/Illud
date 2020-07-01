@@ -11,6 +11,9 @@ public class About extends JDialog {
     private JButton buttonOK;
     private JEditorPane editorPane;
 
+    private static final int DIALOG_WIDTH = 600;
+    private static final int DIALOG_HEIGHT = 340;
+
     public About() {
         setContentPane(contentPane);
         setModal(true);
@@ -44,7 +47,7 @@ public class About extends JDialog {
             }
         });
 
-        this.setSize(600, 320);                     // Setting Dialog Size
+        this.setSize(DIALOG_WIDTH, DIALOG_HEIGHT);              // Setting Dialog Size
         this.setLocationRelativeTo(null);                       // Centers Dialog
         this.setTitle("About");                                 // Sets Dialog Title
     }
