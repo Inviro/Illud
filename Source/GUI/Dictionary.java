@@ -34,6 +34,7 @@ public class Dictionary extends JDialog {
     private static final String SPEECH_PART = "partOfSpeech";
     private static final String DEFINITIONS = "definitions";
     private static final String DEFINITION = "definition";
+    private static final String API_SOURCE = "https://api.dictionaryapi.dev/api/v2/entries/en/";
     private static HashMap<String, String> displayMap;
 
     private StringBuffer resultSB;  // String buffer used to build result string
@@ -101,8 +102,8 @@ public class Dictionary extends JDialog {
     private void readJSON(String input){
         // Getting information from online JSON File
         try {
-            // Url is from Merriam Webster's Dictionary API
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
+            // Url is from unofficial Google dictionary API
+            URL url = new URL(API_SOURCE + input); //Creates URL Object
             BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
             resultSB = new StringBuffer();

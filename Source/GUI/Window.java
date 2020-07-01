@@ -187,11 +187,11 @@ public class Window extends JFrame {
         });
 
         // Assigning shortcut keys
-        assignCtrlListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
-        assignCtrlListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
-        assignCtrlListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
-        assignCtrlListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
-        assignCtrlListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
+        assignCmdListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
+        assignCmdListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
+        assignCmdListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
+        assignCmdListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
+        assignCmdListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
     }
 
     private void updateCounters(JTextArea jTextArea, JList jList){
@@ -199,7 +199,8 @@ public class Window extends JFrame {
         jList.setListData(CounterUtil.getCounterData(currentText));
     }
 
-    public static void assignCtrlListener(int key, JMenuItem jMenuItem){
+    // Adds listener that runs on command + key platform independently
+    public static void assignCmdListener(int key, JMenuItem jMenuItem){
         jMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 key, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
     }

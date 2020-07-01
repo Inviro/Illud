@@ -32,7 +32,7 @@ public class Find extends JDialog {
     private Highlighter high;                       // Highlights each element
     private int index;                              // Current index in search
     private boolean isHidden;                       // Used for when find window is closed to reshow results
-    private String oldQuery;                        // Used to store the user search when hiding find
+    private String oldQuery;                        // Used to store last user search for find
     private int oldTextHash;                        // Used to check if the document changed while hiding
     private int oldArrChecksum;                     // Same as above
 
@@ -40,6 +40,7 @@ public class Find extends JDialog {
     private static final int DIALOG_WIDTH = 500;
     private static final int SMALL_DIALOG_HEIGHT = 140;
     private static final int BIG_DIALOG_HEIGHT = 240;
+    private static final String SEARCH_TITLE = "Search Results";
 
     public Find(JTextArea area) {
         area.setAutoscrolls(true);
@@ -64,10 +65,9 @@ public class Find extends JDialog {
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
                 isHidden = true;                                        // Find has been opened before and is hidden
-                oldQuery = queryField.getText();                        // Saves query text
                 setLastState();
                 onClear();                                              // Clears the window
-                if(checkInstanceValid()){
+                if(isInstanceValid() && !hasQueryChanged()){
                     highlightElement(highlightArr[index]);              // Highlights the search result
                 }
             }
@@ -80,7 +80,6 @@ public class Find extends JDialog {
                     isHidden = false;               // Sets sentinel value
                 }
                 queryField.requestFocusInWindow();  // Gets focus for query field
-                setLastState();                     // Sets system state for check instance
             }
         });
 
@@ -92,14 +91,13 @@ public class Find extends JDialog {
         this.setLocationRelativeTo(null);   // Centers dialog
         high = area.getHighlighter();       // Class highlighter variable
         isHidden = false;                   // Is not in hidden state
-        oldQuery = "";                      // Initializes oldQuery
+        oldQuery = "";                      // Initializes query storage
     }
 
     private void onFind() {
         String newQuery = queryField.getText();
-        String title = "Search Results";
         if (!newQuery.isEmpty()) {
-            if(hasQueryChanged() || hasStateChanged()){
+            if(hasQueryChanged() | hasStateChanged()){
                 highlightText(newQuery);
                 if(highlightArr.length > 0){
                     scrollToQuery(highlightArr[index]);
@@ -107,27 +105,28 @@ public class Find extends JDialog {
                 else{
                     JOptionPane.showMessageDialog(this,
                             "Error: No results found for: \"" + newQuery + "\"",
-                            title, JOptionPane.INFORMATION_MESSAGE);
+                            SEARCH_TITLE, JOptionPane.INFORMATION_MESSAGE);
+                    high.removeAllHighlights();
+                    newQuery += " ";
                 }
             } else{
-                int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
-                changeInstance(index, newIdx);
+                changeInstance(index, 0);
             }
         } else {
             JOptionPane.showMessageDialog(this,
                     "Error: No input detected",
-                    title,
+                    SEARCH_TITLE,
                     JOptionPane.ERROR_MESSAGE);
             high.removeAllHighlights();
             setPanelVis(false);
         }
-        oldQuery = newQuery;        // Saves new query in memory
-        setLastState();             // Sets system state
+        setLastState();
+        oldQuery = newQuery;
     }
 
     // Previous instance of found string
     private void onPrev() {
-        if(checkInstanceValid() && !hasQueryChanged()){
+        if(isInstanceValid() && !hasQueryChanged()){
             // Determines new index based on old index and looping
             int newIdx = (index == 0) ? highlightArr.length - 1 : (index - 1);
             changeInstance(index, newIdx);
@@ -139,7 +138,7 @@ public class Find extends JDialog {
 
     // Next instance of found string
     private void onNext() {
-        if(checkInstanceValid() && !hasQueryChanged()){
+        if(isInstanceValid() && !hasQueryChanged()){
             // Determines new index based on old index and looping
             int newIdx = (index == highlightArr.length - 1) ? 0 : (index + 1);
             changeInstance(index, newIdx);
@@ -152,7 +151,6 @@ public class Find extends JDialog {
     // Next instance of found string
     private void onClear() {
         high.removeAllHighlights();
-        queryField.setText("");
         setPanelVis(false);
     }
 
@@ -167,7 +165,7 @@ public class Find extends JDialog {
                         replaceField.getText()).toString()                  // with what is in replace field
         );
         int oldIndex = index;                                               // Saves current index
-        highlightText(oldQuery);                                            // Gets new text
+        highlightText(queryField.getText());                                // Gets new text and highlights it
         if(--oldIndex > 0){                                                 // If oldIndex can be decremented safely
             changeInstance(index, oldIndex);                                // Move cursor to old spot
         }
@@ -176,15 +174,16 @@ public class Find extends JDialog {
 
     // Replace all instances
     private void onReplaceAll(){
-        String newQuery = area.getText();
+        String query = queryField.getText();                                // What was searched for
+        String areaText = area.getText();                                   // Current text
         String replacement = replaceField.getText();                        // String to replace
         if(!replaceOption.isSelected()) {                                   // Boundary checking is required
-            area.setText(newQuery.replaceAll(oldQuery, replacement));       // Replaces all of the instances
+            area.setText(areaText.replaceAll(query, replacement));          // Replaces all of the instances
         } else{
-            String regexQuery = String.format("\\b%s\\b", oldQuery);        // Regular expression for strict matches
-            area.setText(newQuery.replaceAll(regexQuery, replacement));     // Replaces all of the instances
+            String regexQuery = String.format("\\b%s\\b", query);           // Regular expression for strict matches
+            area.setText(areaText.replaceAll(regexQuery, replacement));     // Replaces all of the instances
         }
-        highlightText(oldQuery);                                            // Does new search
+        onFind();                                                           // Does new search
         this.getRootPane().setDefaultButton(replaceAllButton);              // Sets default button to last pressed one
     }
 
@@ -213,20 +212,21 @@ public class Find extends JDialog {
     }
 
     // Run by onNext and onPrev, generalizes their actions before their core code
-    private boolean checkInstanceValid(){
+    private boolean isInstanceValid(){
         return highlightArr != null && highlightArr.length > 0;
+    }
+
+    private boolean hasQueryChanged(){
+        return !oldQuery.equals(queryField.getText());
     }
 
     // Run by onNext and onPrev, generalizes their actions after their core code
     private void changeInstance(int oldIndex, int newIndex){
-        if(checkInstanceValid()){
-            // If tempText did not change
-            if(!hasQueryChanged()){ // No change
-                if(newIndex != oldIndex){ // Only runs if new and old indexes differ
-                    setHighlight(index, allResultsHighlight);
-                    index = newIndex;
-                    scrollToQuery(highlightArr[index]);
-                }
+        if(isInstanceValid() && !hasQueryChanged()){
+            if(newIndex != oldIndex){ // Only runs if new and old indexes differ
+                setHighlight(index, allResultsHighlight);
+                index = newIndex;
+                scrollToQuery(highlightArr[index]);
             }
         }
     }
@@ -247,14 +247,15 @@ public class Find extends JDialog {
             super(color);
         }
     }
-    
+
+    // Initializes highlight array based on pattern
     private void highlightText(String pattern) {
         index = 0;
         high.removeAllHighlights();
         try {
             String text = area.getText();
             int pos = 0;
-            while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) > -1) {
+            while ((pos = text.toUpperCase().indexOf(pattern.toUpperCase(), pos)) != -1) {
                 high.addHighlight(pos, pos + pattern.length(), allResultsHighlight);
                 pos += pattern.length();
             }
@@ -273,23 +274,17 @@ public class Find extends JDialog {
 
     // Re displays find after it is closed
     private void reDisplay(){
-        if(!oldQuery.isEmpty()){                                                // Has saved query
-            queryField.setText(oldQuery);                                       // Sets search bar to old text
-            if(hasStateChanged()){                                              // Area changed during hiding
+        String queryText = queryField.getText();
+        if(!queryText.isEmpty()){                                               // There is a query
+            if(hasStateChanged() | hasQueryChanged()){                          // Area or query has changed
                 // Changed
-                int tempIndex = index;                                          // Saves index before doing new search
-                highlightText(oldQuery);                                        // Searches new text based on old query
-                index = tempIndex;                                              // Sets index to old value
-                index = ((index > (highlightArr.length - 1)) ? 0 : index);      // Adjusts index to value in array
-                if(index > 0){                                                  // Checks for default value
-                    // Not default, so changes highlights accordingly
-                    setHighlight(0, allResultsHighlight);                 // Sets first idx to all highlight color
-                    scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
-                }
+                int temp = index;                                               // Saves index before doing new search
+                highlightText(queryText);                                       // Searches new text based on old query
+                index = ((temp > (highlightArr.length - 1)) ? 0 : temp);        // Adjusts index to value in array
             } else{
-                // No change
-                if(checkInstanceValid()){                                       // Has matches
+                if(isInstanceValid()){                                          // Has matches
                     setHighlights(allResultsHighlight);                         // Sets all to highlight color
+                    setHighlight(index, currResultHighlight);                   // Sets index to current highlight color
                     scrollToQuery(highlightArr[index]);                         // Moves view box to cursor
                     setPanelVis(true);                                          // Shows GUI elements
                 }
@@ -339,10 +334,6 @@ public class Find extends JDialog {
         boolean arrChanged = (oldArrChecksum != getHighlightArrCheckSum());     // Check for change in checksum
         setLastState();                                                         // Saves last state
         return (textChanged | arrChanged);                                      // Returns if change was detected
-    }
-
-    private boolean hasQueryChanged(){
-        return !oldQuery.equals(queryField.getText());
     }
 
     private void setLastState(){
