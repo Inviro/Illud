@@ -1,11 +1,27 @@
 package Source.GUI;
 
-import javax.swing.*;
+// IO imports
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import java.awt.Color;
 import javax.swing.border.TitledBorder;
+
+// Listener imports
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
+
+// Highlighter imports
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
-import java.awt.*;
-import java.awt.event.*;
 
 public class Find extends JDialog {
     // GUI components

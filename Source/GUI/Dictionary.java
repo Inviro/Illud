@@ -1,7 +1,17 @@
 package Source.GUI;
 
-import javax.swing.*;
-import java.awt.event.*;
+// IO imports
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+
+// File
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.BufferedReader;

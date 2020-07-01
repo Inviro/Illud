@@ -1,6 +1,12 @@
 package Source.GUI;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+
 import javax.swing.event.HyperlinkEvent;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;

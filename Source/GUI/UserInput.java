@@ -1,6 +1,11 @@
 package Source.GUI;
 
-import javax.swing.*;
+// IO imports
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
+import javax.swing.JButton;
 
 public class UserInput {
     // Class Variables
