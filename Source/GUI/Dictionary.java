@@ -26,7 +26,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
-public class Dictionary extends JDialog {
+public class
+Dictionary extends JDialog {
     // JavaSwing Variables
     private JPanel contentPane;
     private JButton buttonDefine;

@@ -20,7 +20,6 @@ public class Window extends JFrame {
     // Window Variables
     private static final String ICON_PATH = "/Resources/icon.png";  // Path to the icon
     private static final String WIN_NAME = "Illud - Text Analysis"; // Name of the window
-    private static ImageIcon illudIcon;                             // Used to set icons of dialog classes
 
     private Find find;                                              // Find dialog
     private Dictionary dictionary;                                  // Dictionary dialog
@@ -43,9 +42,9 @@ public class Window extends JFrame {
 
     // Enum for getting strings corresponding to different voices
     private enum Voice{
-        poppy("dfki-poppy-hsmm"),
-        rms("cmu-rms-hsmm"),
-        slt("cmu-slt-hsmm");
+        poppy("dfki-poppy-hsmm");
+//        rms("cmu-rms-hsmm"),
+//        slt("cmu-slt-hsmm");
         public final String voiceString;                            // Unmodifiable value
         Voice(String vS){                                           // Enum constructor
             this.voiceString = vS;
@@ -86,8 +85,8 @@ public class Window extends JFrame {
         // Initializing JFrame
         this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
-        illudIcon = new ImageIcon(                              // New icon image composed of:
-                        getClass()                              // From the instance of current class:
+        ImageIcon illudIcon = new ImageIcon(                    // New icon image composed of:
+                getClass()                                      // From the instance of current class:
                         .getResource(ICON_PATH));               // Get the resource at ICON_PATH
 
         // Setting Icon image in the JFrame
@@ -144,7 +143,7 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-        JList list = userInput.getJList();
+        JList<String> list = userInput.getJList();
 
         // Listener for Document
         jTextArea.getDocument().addDocumentListener(new DocumentListener() {
@@ -197,7 +196,7 @@ public class Window extends JFrame {
         assignCmdListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
     }
 
-    private void updateCounters(JTextArea jTextArea, JList jList){
+    private void updateCounters(JTextArea jTextArea, JList<String> jList){
         String currentText = jTextArea.getText();
         jList.setListData(CounterUtil.getCounterData(currentText));
     }

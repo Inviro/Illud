@@ -45,7 +45,7 @@ public class Find extends JDialog {
     private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.YELLOW);
 
     private Highlighter.Highlight[] highlightArr;   // Array of highlights of occurrences
-    private Highlighter high;                       // Highlights each element
+    private final Highlighter high;                 // Highlights each element
     private int index;                              // Current index in search
     private boolean isHidden;                       // Used for when find window is closed to reshow results
     private String oldQuery;                        // Used to store last user search for find

@@ -11,7 +11,7 @@ public class UserInput {
     // Class Variables
     private JPanel MainPanel;
     private JTextArea mainTextArea;
-    private JList jList;
+    private JList<String> jList;
     private JPanel jPanel;
     private JScrollPane scrollPane;
     private JButton findAndReplace; // Button added to main GUI
@@ -19,7 +19,7 @@ public class UserInput {
     // Getters
     public JPanel getMainPanel() { return MainPanel; }
     public JTextArea getMainTextArea() { return mainTextArea; }
-    public JList getJList() { return jList; }
+    public JList<String> getJList() { return jList; }
     public void setFile(String text) {
         mainTextArea.setText(text);
     }
