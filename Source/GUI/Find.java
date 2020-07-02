@@ -19,6 +19,9 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 
+// Regex imports
+import java.util.regex.Pattern;
+
 // Highlighter imports
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -26,35 +29,37 @@ import javax.swing.text.Highlighter;
 public class Find extends JDialog {
     // GUI components
     private JPanel contentPane;
+    private JPanel findPanel;
+    private JPanel replacePanel;
     private JButton prevButton;
     private JButton nextButton;
     private JButton replaceButton;
     private JButton replaceAllButton;
-
     private JTextField queryField;
     private JTextField replaceField;
-    private JPanel replacePanel;
-
     private JCheckBox replaceOption;
-    private JPanel findPanel;
-
+    private JCheckBox capsOption;
     private final JTextArea area;
 
     // Highlighter components
     private final Highlighter.HighlightPainter currResultHighlight = new highlighter(Color.ORANGE);
     private final Highlighter.HighlightPainter allResultsHighlight = new highlighter(Color.YELLOW);
-
     private Highlighter.Highlight[] highlightArr;   // Array of highlights of occurrences
     private final Highlighter high;                 // Highlights each element
+
+    // Class logic components
     private int index;                              // Current index in search
     private boolean isHidden;                       // Used for when find window is closed to reshow results
-    private String oldQuery;                        // Used to store last user search for find
     private int oldTextHash;                        // Used to check if the document changed while hiding
     private int oldArrChecksum;                     // Same as above
+    private String oldQuery;                        // Used to store last user search for find
+
+    // Regex components
+    private Pattern regexPattern;
 
     // Constants
-    private static final int DIALOG_WIDTH = 500;
-    private static final int SMALL_DIALOG_HEIGHT = 140;
+    private static final int DIALOG_WIDTH = 480;
+    private static final int SMALL_DIALOG_HEIGHT = 160;
     private static final int BIG_DIALOG_HEIGHT = 240;
     private static final String SEARCH_DIALOG_TITLE = "Search Results";
     private static final String DEFAULT_TITLE = "Find";
@@ -212,7 +217,7 @@ public class Find extends JDialog {
             highlightArr[index] = (Highlighter.Highlight) high.addHighlight(highlightArr[index].getStartOffset(),
                     highlightArr[index].getEndOffset(), p);
         } catch (Exception e) { e.printStackTrace(); }
-        String resultString = "Showing: " + (index + 1) + " of " + highlightArr.length;
+        String resultString = "Result: " + (index + 1) + " of " + highlightArr.length;
         javax.swing.border.TitledBorder titledBorder = javax.swing.BorderFactory.createTitledBorder(resultString);
         titledBorder.setTitleJustification(TitledBorder.CENTER);
         findPanel.setBorder(titledBorder);
@@ -306,7 +311,9 @@ public class Find extends JDialog {
                 }
             }
             setHighlights(allResultsHighlight);                                 // Sets all to highlight color
-            setHighlight(index, currResultHighlight);                           // Sets index to current highlight color
+            if(isInstanceValid()){
+                setHighlight(index, currResultHighlight);                       // Sets index to current highlight color
+            }
         }
     }
 

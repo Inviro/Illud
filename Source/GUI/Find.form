@@ -3,7 +3,7 @@
   <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="10" bottom="10" right="10"/>
     <constraints>
-      <xy x="63" y="117" width="418" height="203"/>
+      <xy x="63" y="117" width="440" height="203"/>
     </constraints>
     <properties/>
     <border type="none" title=""/>
@@ -16,7 +16,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <grid id="f425d" binding="findPanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="f425d" binding="findPanel" layout-manager="GridLayoutManager" row-count="2" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -26,7 +26,7 @@
             <children>
               <component id="b318b" class="javax.swing.JTextField" binding="queryField" default-binding="true">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
@@ -37,25 +37,45 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="34dda" class="javax.swing.JButton" binding="prevButton" default-binding="true">
+              <component id="92443" class="javax.swing.JCheckBox" binding="capsOption">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Prev"/>
+                  <text value="Aa"/>
+                  <toolTipText value="Match Case"/>
+                </properties>
+              </component>
+              <component id="d82d1" class="javax.swing.JCheckBox" binding="replaceOption">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <enabled value="true"/>
+                  <selected value="false"/>
+                  <text value="Words"/>
+                  <toolTipText value="Word Boundary Matching"/>
                 </properties>
               </component>
               <component id="ddb3e" class="javax.swing.JButton" binding="nextButton" default-binding="true">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value="Next"/>
                 </properties>
               </component>
+              <component id="34dda" class="javax.swing.JButton" binding="prevButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Prev"/>
+                </properties>
+              </component>
             </children>
           </grid>
-          <grid id="3a9fc" binding="replacePanel" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="3a9fc" binding="replacePanel" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -66,15 +86,12 @@
             </properties>
             <border type="none" title="Replace" title-justification="2" title-position="1"/>
             <children>
-              <component id="fc77" class="javax.swing.JTextField" binding="replaceField">
+              <component id="ff028" class="javax.swing.JButton" binding="replaceAllButton" default-binding="true">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="-1"/>
-                  </grid>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <focusable value="true"/>
-                  <requestFocusEnabled value="true"/>
+                  <text value="Replace All"/>
                 </properties>
               </component>
               <component id="47712" class="javax.swing.JButton" binding="replaceButton" default-binding="true">
@@ -85,23 +102,15 @@
                   <text value="Replace"/>
                 </properties>
               </component>
-              <component id="ff028" class="javax.swing.JButton" binding="replaceAllButton" default-binding="true">
+              <component id="fc77" class="javax.swing.JTextField" binding="replaceField">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
                 </constraints>
                 <properties>
-                  <text value="Replace All"/>
-                </properties>
-              </component>
-              <component id="d82d1" class="javax.swing.JCheckBox" binding="replaceOption">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <enabled value="true"/>
-                  <selected value="false"/>
-                  <text value="Words"/>
-                  <toolTipText value="Word Boundary Matching"/>
+                  <focusable value="true"/>
+                  <requestFocusEnabled value="true"/>
                 </properties>
               </component>
             </children>

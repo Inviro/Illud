@@ -92,7 +92,7 @@ Dictionary extends JDialog {
     private void onDefine() {
         String input = wordInputTextField.getText();
         // Checks for valid and changed input
-        if(!input.isEmpty()){
+        if(!input.isBlank()){
             if(input.hashCode() != queryHash){
                 queryHash = input.hashCode();                       // Sets input hash to new hash
                 definitionJTextArea.setText(null);                  // Clear text area for new output
