@@ -1,6 +1,12 @@
 package Source.GUI;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.KeyStroke;
+import javax.swing.JComponent;
+
 import javax.swing.event.HyperlinkEvent;
 import java.awt.Desktop;
 import java.awt.event.KeyEvent;
@@ -11,6 +17,9 @@ public class About extends JDialog {
     private JButton buttonOK;
     private JEditorPane editorPane;
 
+    private static final int DIALOG_WIDTH = 600;
+    private static final int DIALOG_HEIGHT = 340;
+
     public About() {
         setContentPane(contentPane);
         setModal(true);
@@ -18,7 +27,7 @@ public class About extends JDialog {
 
         buttonOK.addActionListener(e -> onOK());
 
-        // call onCancel() on OK
+        // call onOK() on Escape
         contentPane.registerKeyboardAction(e -> onOK(),
                 KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -32,19 +41,19 @@ public class About extends JDialog {
                     if(e.getURL() != null){ // Web link
                         try{
                             Desktop.getDesktop().browse(e.getURL().toURI()); // Open in browser
-                        } catch (Exception ex) { ex.printStackTrace(); };
+                        } catch (Exception ex) { ex.printStackTrace(); }
                     } else{ // File
                         try{
                             String filePath = new File("").getAbsolutePath();
                             filePath += "/" + e.getDescription();
                             Desktop.getDesktop().open(new File(filePath)); // Opens file using description
-                        } catch (Exception ex) { ex.printStackTrace(); };
+                        } catch (Exception ex) { ex.printStackTrace(); }
                     }
                 }
             }
         });
 
-        this.setSize(600, 320);                     // Setting Dialog Size
+        this.setSize(DIALOG_WIDTH, DIALOG_HEIGHT);              // Setting Dialog Size
         this.setLocationRelativeTo(null);                       // Centers Dialog
         this.setTitle("About");                                 // Sets Dialog Title
     }

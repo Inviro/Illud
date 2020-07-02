@@ -11,10 +11,10 @@ public class CounterUtil{
     private static final Pattern LINE_PATTERN = Pattern.compile("\\n");
     private static final Pattern PARA_PATTERN = Pattern.compile("\\R+");
     private static final Pattern SENT_PATTERN = Pattern.compile("[!?.:]+");
-    private static Matcher word_matcher = WORD_PATTERN.matcher("");
-    private static Matcher line_matcher = LINE_PATTERN.matcher("");
-    private static Matcher para_matcher = PARA_PATTERN.matcher("");
-    private static Matcher sent_matcher = SENT_PATTERN.matcher("");
+    private static final Matcher word_matcher = WORD_PATTERN.matcher("");
+    private static final Matcher line_matcher = LINE_PATTERN.matcher("");
+    private static final Matcher para_matcher = PARA_PATTERN.matcher("");
+    private static final Matcher sent_matcher = SENT_PATTERN.matcher("");
 
     public static Vector<String> getCounterData(String input){
         Vector<String> output = new Vector<>();                 // Stores output

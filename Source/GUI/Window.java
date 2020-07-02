@@ -3,20 +3,28 @@ import Libraries.MaryTTS.Tutorial.TextToSpeech;
 import Source.Logic.CounterUtil;
 import Source.Logic.FileOpener;
 
-import javax.swing.*;                                           // Used for GUI
+// GUI Imports
 import javax.swing.event.DocumentEvent;                         // Used for getting jTextArea text
 import javax.swing.event.DocumentListener;                      // Used for creating jTextArea listeners
+import javax.swing.JFrame;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JTextArea;
+import javax.swing.JList;
+import javax.swing.KeyStroke;
 
 public class Window extends JFrame {
     // Window Variables
-    private final String ICON_PATH = "/Resources/icon.png";     // Path to the icon
-    private final String WIN_NAME = "Illud - Text Analysis";    // Name of the window
-    private ImageIcon illudIcon;                                // Used to set icons of dialog classes
+    private static final String ICON_PATH = "/Resources/icon.png";  // Path to the icon
+    private static final String WIN_NAME = "Illud - Text Analysis"; // Name of the window
 
-    private Find find;                                          // Find dialog
-    private Dictionary dictionary;                              // Dictionary dialog
-    private About about;                                        // About dialog
-    private FileOpener fileOpener;                              // Opens files
+    private Find find;                                              // Find dialog
+    private Dictionary dictionary;                                  // Dictionary dialog
+    private About about;                                            // About dialog
+    private FileOpener fileOpener;                                  // Opens files
 
     // JMenuItems to add listeners to in the menu
     private JMenuItem open_menu_item;
@@ -26,19 +34,19 @@ public class Window extends JFrame {
     private JMenuItem about_menu_item;
 
     // UserInput variables
-    private UserInput userInput;                                // Form for user input
+    private UserInput userInput;                                    // Form for user input
 
     // Text to Speech Variables
-    private TextToSpeech tts;                                   // Text to speech object
-    private float volume;                                       // Volume of Text To Speech
+    private final TextToSpeech tts;                                 // Text to speech object
+    private final float volume;                                     // Volume of Text To Speech
 
     // Enum for getting strings corresponding to different voices
     private enum Voice{
-        poppy("dfki-poppy-hsmm"),
-        rms("cmu-rms-hsmm"),
-        slt("cmu-slt-hsmm");
-        public final String voiceString;                        // Unmodifiable value
-        Voice(String vS){                                       // Enum constructor
+        poppy("dfki-poppy-hsmm");
+//        rms("cmu-rms-hsmm"),
+//        slt("cmu-slt-hsmm");
+        public final String voiceString;                            // Unmodifiable value
+        Voice(String vS){                                           // Enum constructor
             this.voiceString = vS;
         }
     }
@@ -58,7 +66,7 @@ public class Window extends JFrame {
         catch (Exception e) { // Theme is not found
             try {
                 UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // Sets to default theme
-            } catch (Exception ex) {}
+            } catch (Exception ex) { e.printStackTrace(); }
         }
 
         // Initializing text to speech
@@ -77,8 +85,8 @@ public class Window extends JFrame {
         // Initializing JFrame
         this.setTitle(WIN_NAME);                                // Creates new JFrame to put JPanels on
 
-        illudIcon = new ImageIcon(                              // New icon image composed of:
-                getClass()                              // From the instance of current class:
+        ImageIcon illudIcon = new ImageIcon(                    // New icon image composed of:
+                getClass()                                      // From the instance of current class:
                         .getResource(ICON_PATH));               // Get the resource at ICON_PATH
 
         // Setting Icon image in the JFrame
@@ -135,7 +143,7 @@ public class Window extends JFrame {
     private void makeListeners(){
         // Gets UI elements from userInput
         JTextArea jTextArea = userInput.getMainTextArea();
-        JList list = userInput.getJList();
+        JList<String> list = userInput.getJList();
 
         // Listener for Document
         jTextArea.getDocument().addDocumentListener(new DocumentListener() {
@@ -148,14 +156,10 @@ public class Window extends JFrame {
         });
 
         // Listener for File > Open
-        open_menu_item.addActionListener(e -> {
-            fileOpener.activate(this, userInput);
-        });
+        open_menu_item.addActionListener(e -> fileOpener.activate(this, userInput));
 
         // Listener for Action > Find
-        find_menu_item.addActionListener(e -> {
-            find.setVisible(true);
-        });
+        find_menu_item.addActionListener(e -> find.setVisible(true));
 
         // Listener for Action > Dictionary
         dict_menu_item.addActionListener(e -> {
@@ -170,36 +174,35 @@ public class Window extends JFrame {
         });
 
         // Listener for Help > About
-        about_menu_item.addActionListener(e -> {
-            about.setVisible(true);
-        });
+        about_menu_item.addActionListener(e -> about.setVisible(true));
 
         tts_menu_item.addActionListener(e -> {
             // Gets Text from jTextArea
             String text = jTextArea.getSelectedText();
 
             // No text highlighted
-            if(text == null){           // If text is null end TTS playback
+            if(text == null){                   // If text is null end TTS playback
                 endSpeak();
-            } else if (text != ""){     // Checks if text is not empty
-                speak(text);            // Uses TTS on the text
+            } else if (!text.equals("")){       // Checks if text is not empty
+                speak(text);                    // Uses TTS on the text
             }
         });
 
         // Assigning shortcut keys
-        assignCtrlListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
-        assignCtrlListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
-        assignCtrlListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
-        assignCtrlListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
-        assignCtrlListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
+        assignCmdListener(java.awt.event.KeyEvent.VK_D, dict_menu_item);   // Opens dict on Command + D
+        assignCmdListener(java.awt.event.KeyEvent.VK_F, find_menu_item);   // Opens find on Command + F
+        assignCmdListener(java.awt.event.KeyEvent.VK_I, about_menu_item);  // Opens find on Command + I
+        assignCmdListener(java.awt.event.KeyEvent.VK_O, open_menu_item);   // Opens open on Command + O
+        assignCmdListener(java.awt.event.KeyEvent.VK_T, tts_menu_item);    // Opens tts on Command + T
     }
 
-    private void updateCounters(JTextArea jTextArea, JList jList){
+    private void updateCounters(JTextArea jTextArea, JList<String> jList){
         String currentText = jTextArea.getText();
         jList.setListData(CounterUtil.getCounterData(currentText));
     }
 
-    public static void assignCtrlListener(int key, JMenuItem jMenuItem){
+    // Adds listener that runs on command + key platform independently
+    public static void assignCmdListener(int key, JMenuItem jMenuItem){
         jMenuItem.setAccelerator(KeyStroke.getKeyStroke(
                 key, java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
     }

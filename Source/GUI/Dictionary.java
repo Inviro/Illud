@@ -1,7 +1,17 @@
 package Source.GUI;
 
-import javax.swing.*;
-import java.awt.event.*;
+// IO imports
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
+import java.awt.event.KeyEvent;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+
+// File
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -16,7 +26,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
-public class Dictionary extends JDialog {
+public class
+Dictionary extends JDialog {
     // JavaSwing Variables
     private JPanel contentPane;
     private JButton buttonDefine;
@@ -25,7 +36,7 @@ public class Dictionary extends JDialog {
     private JTextArea definitionJTextArea;
 
     // JSON variables
-    private JSONParser jsonParser;
+    private final JSONParser jsonParser;
 
     // Keys to get each part of the dictionary entry
     private static final String PHONETIC = "phonetic";
@@ -34,6 +45,7 @@ public class Dictionary extends JDialog {
     private static final String SPEECH_PART = "partOfSpeech";
     private static final String DEFINITIONS = "definitions";
     private static final String DEFINITION = "definition";
+    private static final String API_SOURCE = "https://api.dictionaryapi.dev/api/v2/entries/en/";
     private static HashMap<String, String> displayMap;
 
     private StringBuffer resultSB;  // String buffer used to build result string
@@ -80,7 +92,7 @@ public class Dictionary extends JDialog {
     private void onDefine() {
         String input = wordInputTextField.getText();
         // Checks for valid and changed input
-        if(!input.isEmpty()){
+        if(!input.isBlank()){
             if(input.hashCode() != queryHash){
                 queryHash = input.hashCode();                       // Sets input hash to new hash
                 definitionJTextArea.setText(null);                  // Clear text area for new output
@@ -101,8 +113,8 @@ public class Dictionary extends JDialog {
     private void readJSON(String input){
         // Getting information from online JSON File
         try {
-            // Url is from Merriam Webster's Dictionary API
-            URL url = new URL("https://api.dictionaryapi.dev/api/v2/entries/en/" + input); //Creates URL Object
+            // Url is from unofficial Google dictionary API
+            URL url = new URL(API_SOURCE + input); //Creates URL Object
             BufferedReader reader = new BufferedReader(new InputStreamReader((url.openStream())));  //Reads URL
 
             resultSB = new StringBuffer();
@@ -181,7 +193,12 @@ public class Dictionary extends JDialog {
     private void appendJSONStringFromKey(JSONObject jsonObject, String key){
         Object o = jsonObject.get(key);
         if(o instanceof String){                                    // Simple entry
-            resultSB.append(displayMap.get(key) + ": " + o + "\n"); // Appends formatted string to string buffer
+            // Appends formatted string to string buffer
+            // Append is used multiple times instead of concatenation since string buffer has better performance
+            resultSB.append(displayMap.get(key));
+            resultSB.append(": ");
+            resultSB.append(o);
+            resultSB.append("\n");
         }
         // Not string or null, so nothing happens
     }
@@ -190,9 +207,16 @@ public class Dictionary extends JDialog {
     // Prints formatted index of array with tabbing
     private void appendJSONStringFromKey(JSONObject jsonObject, String key, int index, int num_tabs){
         Object o = jsonObject.get(key);
-        if(o instanceof String){                                                // Simple entry
-            resultSB.append("\t".repeat(num_tabs) +                             // Appends num_tabs tabs
-                    displayMap.get(key) + " " + index + ": " + o + "\n") ;      // Appends string to string buffer
+        if(o instanceof String){                        // Simple entry
+            // Appends string to string buffer
+            // Append is used multiple times instead of concatenation since string buffer has better performance
+            resultSB.append("\t".repeat(num_tabs));     // Appends num_tabs tabs
+            resultSB.append(displayMap.get(key));
+            resultSB.append(" ");
+            resultSB.append(index);
+            resultSB.append(" : ");
+            resultSB.append(o);
+            resultSB.append("\n");
         }
         // Not string or null, so nothing happens
     }
