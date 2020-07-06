@@ -1,6 +1,6 @@
 package Source.GUI;
 
-// IO imports
+// IO Imports
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JButton;
@@ -56,7 +56,6 @@ public class Find extends JDialog {
     private boolean oldWordVal;
     private boolean oldCapsVal;
     private String oldQuery;                        // Used to store last user search for find
-    private String regexQuery;                      // Used to store last regex search
 
     // Constants
     private static final int DIALOG_WIDTH = 480;
@@ -200,9 +199,14 @@ public class Find extends JDialog {
 
     // Replace all instances
     private void onReplaceAll(){
-        String areaText = area.getText();                                   // Current text
         String replacement = replaceField.getText();                        // String to replace
-        area.setText(areaText.replaceAll(regexQuery, replacement));         // Replaces all of the instances
+        StringBuilder sb = new StringBuilder(area.getText());               // String builder with current text
+        for(int i = highlightArr.length - 1; i > -1; i--){                  // Reversed loop through highlight array
+            sb.replace(highlightArr[i].getStartOffset(),                    // Replace from start
+                    highlightArr[i].getEndOffset(),                         // To finish
+                    replacement);                                           // With replacement text
+        }
+        area.setText(sb.toString());                                        // Sets text to replacement text
         onFind();                                                           // Does new search
         this.getRootPane().setDefaultButton(replaceAllButton);              // Sets default button to last pressed one
     }
@@ -295,8 +299,6 @@ public class Find extends JDialog {
         } catch (Exception e){
             e.printStackTrace();
         }
-
-        regexQuery = patternCopy;
         highlightArr = high.getHighlights();            // Populates array of highlights
         if(highlightArr.length > 0){ // 1+ matches
             setHighlight(index, currResultHighlight);   // Highlights index 0
