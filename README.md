@@ -8,7 +8,7 @@ Illud
 </p>
 
 ## What?
-Illud is a smart text analyzer that displays different metrics about the data, including the count of certain elements on the page as well as find and replace functionality, dictionary definitions, and text to speech.
+Illud is a smart text analyzer written in pure Java that displays different metrics about the inputted data, including the count of various elements on the page and includes find and replace, dictionary definitions, and text to speech functionality.
 
 ## How?
 It is implemented in Java using different open source libraries and Java Swing for the GUI
